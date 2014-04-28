@@ -3,18 +3,18 @@ setIntervalWithContext = function(code,delay,context){
  return setInterval(function(){
   code.call(context);
  },delay);
-}
+};
  
 setTimeoutWithContext = function(code,delay,context){
  return setTimeout(function(){
   code.call(context);
  },delay);
-}
+};
 
 debug = function(message) {
 	if (window.console)
 		window.console.log(message);
-}
+};
 
 /*
  * Creates a player object.
@@ -140,7 +140,7 @@ var Player = function(x, y, keyboard, name) {
 			   entity.x + entity.width < x - this.radius / 2 || 
 			   entity.y > y + this.radius / 2 ||
 			   entity.y + entity.height < y - this.radius / 2);	
-	}
+	};
 	
 	// TODO: make a function to return the SQUARE to all entities, so you can use that
 }
@@ -250,7 +250,8 @@ var Game = function(ctx, width, height) {
 		this.addEntity(this.player2);
 		
 		// Add random walls (not in the player's square!)
-		
+		// TODO: move this code to a GameConstructorObject and have many game constructors (or map constructors)
+        // using composition
 		var walls = Math.floor(Math.random() * 50);
 		var sampleWall = new Wall(0,0, {});
 		debug("Walls: "+walls);
@@ -336,7 +337,7 @@ var Game = function(ctx, width, height) {
 		this.ctx.fillText(player.name, x, y);
 		
 		this.ctx.fillText(player.life, x, y + 20);
-	}
+	};
 	
 	this.clear = function() {
 		// ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT);
@@ -445,8 +446,8 @@ var Bullet = function(x, y, direction) {
 			   entity.x + entity.width < this.x - this.radius / 2 || 
 			   entity.y > this.y + this.radius / 2 ||
 			   entity.y + entity.height < this.y - this.radius / 2);	
-	}
-}
+	};
+};
 
 $(document).ready(function() {	
 	var ctx = $('#canvas')[0].getContext("2d");		 
