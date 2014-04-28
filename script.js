@@ -21,14 +21,15 @@ debug = function(message) {
  *
  * @keyboard Can be 1 or 2.
  */
-var Player = function(x, y, keyboard, name) {
+var Player = function(x, y, direction, name, keyboard) {
 	this.x = x;
 	this.y = y;
-	this.keyboard = keyboard;
+	this.direction = direction;
 	this.name = name;	
 	this.type = "player";
 	this.radius = 10;
 	this.life = 100;
+    this.keyboard = keyboard;
 	
 	this.setGame = function(game) {
 		this.game = game;
@@ -58,55 +59,33 @@ var Player = function(x, y, keyboard, name) {
 	};
 	
 	this.shoot = function() {
-		this.game.addEntity(new Bullet(this.x, this.y + (this.keyboard == 1 ? 30 : - 30), keyboard == 1 ? 1 : -1));		
+		this.game.addEntity(new Bullet(this.x, this.y + (this.direction == 1 ? 30 : - 30), direction == 1 ? 1 : -1));		
 	};
 	
 	this.onKeyDown = function(evt) {};
 	
 	this.onKeyUp = function(evt) {
 		// console.log(evt.keyCode);
-		
-		// TODO: refactor
-		if (this.keyboard == 1) {
-			switch(evt.keyCode) {
-				case 65: 
-					// "A"
-					if (this.canMove(this.x - 10, this.y))
-					this.x -= 10;
-					break;
-				case 68:
-					// "D"
-					if (this.canMove(this.x + 10, this.y))
-					this.x += 10;
-					break;
-				case 87: // W 
-					if (this.canMove(this.x, this.y - 10))
-					this.y -= 10;
-					break;
-				case 83: // S 
-					if (this.canMove(this.x, this.y + 10))
-					this.y += 10;
-					break;
-				case 32: // space
-					this.shoot(); break;				
-			}
-		} else {
-			switch(evt.keyCode) {
-				case 39: // right 
-					if (this.canMove(this.x + 10, this.y))
-					this.x += 10; break;
-				case 37: // left 
-					if (this.canMove(this.x - 10, this.y))
-					this.x -= 10; break;
-				case 38: // up 
-					if (this.canMove(this.x, this.y - 10))
-					this.y -= 10; break;
-				case 40: // down
-					if (this.canMove(this.x, this.y + 10))
-					this.y += 10; break;
-				case 13: // space
-					this.shoot(); break;
-			}
+
+        switch(evt.keyCode) {
+		case this.keyboard.left: 
+			if (this.canMove(this.x - 10, this.y))
+				this.x -= 10;
+			break;
+		case this.keyboard.right:
+			if (this.canMove(this.x + 10, this.y))
+				this.x += 10;
+			break;
+		case this.keyboard.forward:
+			if (this.canMove(this.x, this.y - 10))
+				this.y -= 10 + this.direction;
+			break;
+		case this.keyboard.backward:
+			if (this.canMove(this.x, this.y + 10))
+				this.y += 10 * this.direction;
+			break;
+		case this.keyboard.shoot: // space
+			this.shoot(); break;				
 		}		
 	};
 	
@@ -143,7 +122,7 @@ var Player = function(x, y, keyboard, name) {
 	};
 	
 	// TODO: make a function to return the SQUARE to all entities, so you can use that
-}
+};
 
 var Wall = function(x, y, material) {
 	this.x = x;
@@ -223,9 +202,24 @@ var Game = function(ctx, width, height) {
 	this.removeEntities = [];
 	
 	/* PUBLIC FUNCTIONS */
-	this.init = function() {	
-		this.player1 = new Player(100, 100, 1, "Player 1");
-		this.player2 = new Player(500, 400, 2, "Player 2");
+	this.init = function() {
+        var keyboard1 =         {
+            left: 65, // A,
+            right: 68, // D
+            forward: 87, // W 
+            backward: 83, // S,
+            shoot: 32 // ENTER
+        };
+
+        var keyboard2 = {
+            left: 37, // left
+            right: 39, // right
+            forward: 38, // forward
+            backward: 40, // down
+            shoot: 13 // ENTER
+        };
+		this.player1 = new Player(100, 100, 1, "Player 1", keyboard1);
+		this.player2 = new Player(500, 400, 2, "Player 2", keyboard2);
 		
 		var _self = this;
 		$(document).keydown(function(evt) {
