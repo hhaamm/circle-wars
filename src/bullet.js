@@ -69,7 +69,7 @@ var Bullet = function(x, y, direction) {
                         // changes direction randomly
                         // TODO: find some way to do this more efficient
                         //       if direction is against the wall, then it will be computed again
-                        _self.direction *= Math.random();
+                        _self.direction = Math.random() * Math.PI * 2;
                         // reduces damage, minimun is 1
                         _self.damage = Math.ceil(_self.damage * Math.random()); 
 					} else {
