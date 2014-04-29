@@ -21,12 +21,13 @@ var ResourceLoader = function() {
                 debug("loaded "+path);
                 if (_self.imagesLoaded == Object.keys(_self.imagePaths).length) {
                     debug("All resources loaded");
-                    callback.call();
+                    callback.call({success: true});
                 }
             });
             img.addEventListener("error", function(e) {
                 debug("Error when loading resource " + path);
                 debug(e);
+                callback.call({success: false, error: e});
             });
             img.src = path;
             this.images[key] = img;
