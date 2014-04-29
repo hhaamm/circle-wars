@@ -8,7 +8,9 @@ var Game = function(ctx, width, height) {
 	// An entity is an object that implements draw(), process() and setGame methods
 	// and implements type (player, bullet) and radius properties
 	
-	this.removeEntities = [];   
+	this.removeEntities = [];
+
+    this.resources = new ResourceLoader();
 	
 	/* PUBLIC FUNCTIONS */
 	this.init = function() {
@@ -74,10 +76,12 @@ var Game = function(ctx, width, height) {
 				this.addEntity(new Wall(x, y, material));
 			}			
 		}
-						
-		this.runInterval = setIntervalWithContext(this.run, 10, this);
-		
-		return this.runInterval;
+
+        var _self = this;
+
+        this.resources.loadResources(function() {
+		    _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
+        });
 	};
 	
 	this.addEntity = function(entity) {
