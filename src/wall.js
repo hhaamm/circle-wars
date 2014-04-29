@@ -21,7 +21,11 @@ var Wall = function(x, y, material) {
 			this.game.removeEntity(this);
 			this.life = 0;
 
-            // TODO: make explosion animation
+            // Explosion animation
+            if (this.material.explosionChance > Math.random()) {
+                // TODO: improve
+                this.game.addEntity(new Explosion(this.x + this.width / 2, this.y + this.height / 2, Math.floor(Math.random() * this.material.life)));
+            }
 		};
 	};
 };
@@ -32,14 +36,16 @@ var StoneMaterial = {
 	bounceChance : 0.9,
 	explosionChance : 0.01,
 	pierceChance : 0.01,
+    breakChance: 0.4,
 	fillStyle : "rgb(148, 148, 143)"
 };
 
 var WoodMaterial = {
 	life : 50,
 	bounceChance : 0.07,
-	explosionChance : 0.1,
+	explosionChance : 0.6,
 	pierceChance : 0.4,
+    breakChance: 0.7,
 	fillStyle : "rgb(150,29,28)"	
 };
 
@@ -48,6 +54,7 @@ var GlassMaterial = {
 	bounceChance : 0.01,
 	explosionChance : 0.9,
 	pierceChance : 0.9,
+    breakChance: 1,
 	fillStyle : "rgb(163,255,249)"
 };
 
@@ -56,6 +63,7 @@ var TreeMaterial = {
 	bounceChance : 0.1,
 	explosionChance : 0.01,
 	pierceChance : 0.9,
+    breakChance: 0.1,
 	fillStyle : "rgb(37, 94, 25)"
 };
 

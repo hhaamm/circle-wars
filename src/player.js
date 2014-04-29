@@ -12,6 +12,8 @@ var Player = function(x, y, direction, name, keyboard) {
 	this.radius = 10;
 	this.life = 100;
     this.keyboard = keyboard;
+    this.DIRECTION_UP = 90 * Math.PI / 180;
+    this.DIRECTION_DOWN = 270 * Math.PI / 180;
 	
 	// call this function when something hits the player
 	this.hit = function(damage) {
@@ -35,7 +37,7 @@ var Player = function(x, y, direction, name, keyboard) {
 	};
 	
 	this.shoot = function() {
-		this.game.addEntity(new Bullet(this.x, this.y + (this.direction == 1 ? 30 : - 30), direction == 1 ? 1 : -1));		
+		this.game.addEntity(new Bullet(this.x, this.y + (this.direction == 1 ? 30 : - 30), direction == 1 ? this.DIRECTION_UP : this.DIRECTION_DOWN));		
 	};
 	
 	this.onKeyDown = function(evt) {};

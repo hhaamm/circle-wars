@@ -2,12 +2,13 @@ var Game = function(ctx, width, height) {
 	this.ctx = ctx;
 	this.WIDTH = width;
 	this.HEIGHT = height;	
-	
+
+    this.players = [];
 	this.entities = []; // List of entities that will be drawn and process
 	// An entity is an object that implements draw(), process() and setGame methods
 	// and implements type (player, bullet) and radius properties
 	
-	this.removeEntities = [];
+	this.removeEntities = [];   
 	
 	/* PUBLIC FUNCTIONS */
 	this.init = function() {
@@ -50,6 +51,9 @@ var Game = function(ctx, width, height) {
 		
 		this.addEntity(this.player1);
 		this.addEntity(this.player2);
+
+        this.players.push(this.player1);
+        this.players.push(this.player2);
 		
 		// Add random walls (not in the player's square!)
 		// TODO: move this code to a GameConstructorObject and have many game constructors (or map constructors)

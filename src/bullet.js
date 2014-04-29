@@ -1,14 +1,22 @@
+/*
+ * Creates a new Bullet
+ *
+ * @direction    Should be an angle in radians (≈ 57.295°)
+ */
 var Bullet = function(x, y, direction) {
 	this.x = x;
 	this.y = y;
 	this.direction = direction;
 	this.type = "bullet";
 	this.radius = 5;
-	this.bounceChance = 0.9;
+	this.bounceChance = 1;
+    this.speed = 4;
+    this.damage = 10;
 	
-	this.process = function() {		
-		this.y += 4 * this.direction;
-		
+	this.process = function() {
+        this.x += - Math.cos(this.direction) * this.speed;
+		this.y += Math.sin(this.direction) * this.speed;
+
 		var _self = this;
 		
 		// check if we are hitting a player
@@ -56,10 +64,14 @@ var Bullet = function(x, y, direction) {
 					debug("Wall hit");
 					entity.hit(_self.getDamage());
 					
-					
 					if (entity.bounceChance * _self.bounceChance > Math.random()) {
 						debug("Bounce");
-						_self.direction *= -1;
+                        // changes direction randomly
+                        // TODO: find some way to do this more efficient
+                        //       if direction is against the wall, then it will be computed again
+                        _self.direction *= Math.random();
+                        // reduces damage, minimun is 1
+                        _self.damage = Math.ceil(_self.damage * Math.random()); 
 					} else {
 						_self.game.removeEntity(_self);
 					}
@@ -82,7 +94,7 @@ var Bullet = function(x, y, direction) {
 	};
 	
 	this.getDamage = function() {
-		return 10;
+		return this.damage;
 	};
 	
 	// tests if two entities intersects using a Square
