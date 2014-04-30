@@ -14,6 +14,8 @@ var Player = function(x, y, direction, name, keyboard) {
     this.keyboard = keyboard;
     this.DIRECTION_UP = 90 * Math.PI / 180;
     this.DIRECTION_DOWN = 270 * Math.PI / 180;
+    this.weapon = null;
+    this.basicWeapon = new Pistol(this);
 	
 	// call this function when something hits the player
 	this.hit = function(damage) {
@@ -37,8 +39,16 @@ var Player = function(x, y, direction, name, keyboard) {
 	};
 	
 	this.shoot = function() {
-		this.game.addEntity(new Bullet(this.x, this.y + (this.direction == 1 ? 30 : - 30), direction == 1 ? this.DIRECTION_UP : this.DIRECTION_DOWN));		
+        if (this.weapon) {
+            this.weapon.shoot(this);
+        } else {
+            this.basicWeapon.shoot(this);
+        }
 	};
+
+    this.addWeapon = function(weapon) {
+        this.weapon = weapon;
+    };
 	
 	this.onKeyDown = function(evt) {};
 	
@@ -64,7 +74,16 @@ var Player = function(x, y, direction, name, keyboard) {
 			break;
 		case this.keyboard.shoot: // space
 			this.shoot(); break;				
-		}		
+		}
+
+        var _self = this;
+        $(this.game.entities).each(function(i, entity) {
+            if (entity.type == "weapon" && _self.hitTest(entity)) {
+                debug("Picked up weapon");
+                _self.game.removeEntity(entity);
+                _self.addWeapon(entity);
+            }
+        });
 	};
 	
 	/*

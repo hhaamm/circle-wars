@@ -81,6 +81,9 @@ var Game = function(ctx, width, height) {
 
         this.resources.loadResources(function() {
 		    _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
+
+            // Test code
+            _self.addEntity(new Shotgun(200, 100));
         });
 	};
 	

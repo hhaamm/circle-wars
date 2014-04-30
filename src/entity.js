@@ -8,6 +8,11 @@ var Entity = function() {
 	// tests if two entities intersects using a Square
 	// TODO: move this to Entity class
 	this.hitTest = function(entity, x, y) {
+        if (x == undefined)
+            x = this.x;
+        if (y == undefined)
+            y = this.y;
+        
 		// TODO: when moving to entity class, delete radius code
 		// it's only used for circled entities
 	  return !(entity.x > x + this.radius / 2 || 
