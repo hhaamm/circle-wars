@@ -31,6 +31,10 @@ var Game = function(ctx, width, height) {
         };
 		this.player1 = new Player(100, 100, 1, "Player 1", keyboard1);
 		this.player2 = new Player(500, 400, 2, "Player 2", keyboard2);
+
+        // only for debug purpuses
+        // this.player1.weapon = new MachineGun(0,0);
+        // this.player2.weapon = new MachineGun(0,0);
 		
 		var _self = this;
 		$(document).keydown(function(evt) {

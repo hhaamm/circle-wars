@@ -49,7 +49,7 @@ var MachineGun = function(x, y) {
 
     this.shoot = function(player) {
         for(var i = 0; i < 5; i++) {
-		    player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30) + i * 10, player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN));
+		    player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30) + i * 10 * (player.direction == 1 ? 1 : -1), player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN));
         }
         this.bullets -=5;
     };
