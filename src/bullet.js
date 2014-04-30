@@ -77,6 +77,13 @@ var Bullet = function(x, y, direction) {
 					}
 				}
 			}
+
+            if (entity.type == "weapon") {
+				if (_self.hitTest(entity)) {
+                    _self.game.removeEntity(_self);
+                    _self.game.removeEntity(entity);
+                }
+            }
 		});
 		
 		if (this.x < 0 || this.x > this.game.WIDTH || this.y < 0 || this.y > this.game.HEIGHT) {
@@ -96,7 +103,8 @@ var Bullet = function(x, y, direction) {
 	this.getDamage = function() {
 		return this.damage;
 	};
-	
+
+	// REMOVE: THIS IS UNNECESARY
 	// tests if two entities intersects using a Square
 	// TODO: move this to Entity class
 	this.hitTest = function(entity) {
@@ -109,3 +117,8 @@ var Bullet = function(x, y, direction) {
 	};
 };
 Bullet.prototype = new Entity();
+
+var Granade = function(x, y, direction) {
+
+};
+Granade.prototype = new Entity();

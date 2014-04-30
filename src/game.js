@@ -81,9 +81,6 @@ var Game = function(ctx, width, height) {
 
         this.resources.loadResources(function() {
 		    _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
-
-            // Test code
-            _self.addEntity(new Shotgun(200, 100));
         });
 	};
 	
@@ -137,6 +134,17 @@ var Game = function(ctx, width, height) {
 			
 			// TODO: Add restart game button
 		}
+
+        // Random weapon generation
+        // TODO: make this exponential with the number of weapons available in the map!
+        if (Math.random() > 0.999) {
+            debug("Added weapon");
+            var weaponConstructor = weaponTypes[Math.floor(Math.random()*weaponTypes.length)];
+            var weapon = new weaponConstructor(Math.floor(Math.random()*this.WIDTH), Math.floor(Math.random()*this.HEIGHT));
+            weapon.x -= weapon.width / 2;
+            weapon.y -= weapon.height / 2;
+            this.addEntity(weapon);
+        }
 	};
 	
 	this.drawUI = function() {
@@ -148,8 +156,8 @@ var Game = function(ctx, width, height) {
 		this.ctx.fillStyle = "white";
 		this.ctx.font = "bold 16px Arial";
 		this.ctx.fillText(player.name, x, y);
-		
-		this.ctx.fillText(player.life, x, y + 20);
+		this.ctx.fillText(player.getWeapon().name + " " + (player.getWeapon().bullets > 0 ? player.getWeapon().bullets : ""), x, y + 20);
+		this.ctx.fillText(player.life, x, y + 40);
 	};
 	
 	this.clear = function() {

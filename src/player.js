@@ -15,7 +15,7 @@ var Player = function(x, y, direction, name, keyboard) {
     this.DIRECTION_UP = 90 * Math.PI / 180;
     this.DIRECTION_DOWN = 270 * Math.PI / 180;
     this.weapon = null;
-    this.basicWeapon = new Pistol(this);
+    this.basicWeapon = new Pistol();
 	
 	// call this function when something hits the player
 	this.hit = function(damage) {
@@ -39,12 +39,19 @@ var Player = function(x, y, direction, name, keyboard) {
 	};
 	
 	this.shoot = function() {
-        if (this.weapon) {
-            this.weapon.shoot(this);
-        } else {
-            this.basicWeapon.shoot(this);
+        this.getWeapon().shoot(this);
+        if (this.getWeapon().bullets === 0) {
+            this.weapon = null;
         }
 	};
+
+    this.getWeapon = function() {
+        if (this.weapon) {
+            return this.weapon;
+        } else {
+            return this.basicWeapon;
+        }
+    };
 
     this.addWeapon = function(weapon) {
         this.weapon = weapon;
@@ -105,6 +112,6 @@ var Player = function(x, y, direction, name, keyboard) {
 			}
 		});
 		return entityCanMove;
-	};
+	};    
 };
 Player.prototype = new Entity();

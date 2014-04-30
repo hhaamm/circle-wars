@@ -1,4 +1,5 @@
 var Weapon = function() {
+    this.bullets = 5;
     this.type = "weapon";
     this.playerKeyUp = function() {};
     this.playerKeyDown = function() {};    
@@ -10,7 +11,9 @@ var Weapon = function() {
 Weapon.prototype = new Entity();
 
 /* Basic weapon, is not delivered by the weapon dealer */
-var Pistol = function() {    
+var Pistol = function() {
+    this.bullets = -1; // Pistol has infinite bullets
+    this.name = "Pistol";
     this.shoot = function(player) {
 		player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30), player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN));		
     };
@@ -18,6 +21,26 @@ var Pistol = function() {
 Pistol.prototype = new Weapon();
 
 var Shotgun = function(x, y) {
+    this.bullets = 8;
+    this.name = "Shotgun";
+    this.image = "shotgun";
+    this.width = 100;
+    this.height = 24;
+    this.x = x;
+    this.y = y;
+
+    this.shoot = function(player) {
+        for(var i = -3; i < 3; i++) {
+		    player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30), player.direction == 1 ? player.DIRECTION_UP + i / 15 : player.DIRECTION_DOWN + i / 15));
+        }
+        this.bullets -= 1;
+    };
+};
+Shotgun.prototype = new Weapon();
+
+var MachineGun = function(x, y) {
+    this.bullets = 50;
+    this.name = "Machine Gun";
     this.image = "shotgun";
     this.width = 100;
     this.height = 24;
@@ -26,13 +49,11 @@ var Shotgun = function(x, y) {
 
     this.shoot = function(player) {
         for(var i = 0; i < 5; i++) {
-		    player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30), player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN));
+		    player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30) + i * 10, player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN));
         }
+        this.bullets -=5;
     };
 };
-Shotgun.prototype = new Weapon();
-
-var MachineGun = function() {
-    
-};
 MachineGun.prototype = new Weapon();
+
+var weaponTypes = [MachineGun, Shotgun];
