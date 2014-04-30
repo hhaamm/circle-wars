@@ -56,4 +56,20 @@ var MachineGun = function(x, y) {
 };
 MachineGun.prototype = new Weapon();
 
-var weaponTypes = [MachineGun, Shotgun];
+var FragmentationPistol = function(x, y) {
+    this.bullets = 1;
+    this.name = "Frag";
+    this.image = "shotgun";
+    this.width = 100;
+    this.height = 24;
+    this.x = x;
+    this.y = y;
+
+    this.shoot = function(player) {
+        player.game.addEntity(new FragmentationBullet(player.x, player.y + (player.direction == 1 ? 30 : - 30), player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN, 2));
+        this.bullets -= 1;
+    };
+};
+FragmentationPistol.prototype = new Weapon();
+
+var weaponTypes = [MachineGun, Shotgun, FragmentationPistol];

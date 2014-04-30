@@ -30,6 +30,7 @@ var Bullet = function(x, y, direction) {
 					entity.hit(_self.getDamage());
 					// Removing itself... we don't want to hit the player 2 times!
 					_self.game.removeEntity(_self);
+                    _self.fragCallback();
 				}
 			}
 			
@@ -74,6 +75,7 @@ var Bullet = function(x, y, direction) {
                         _self.damage = Math.ceil(_self.damage * Math.random()); 
 					} else {
 						_self.game.removeEntity(_self);
+                        _self.fragCallback();
 					}
 				}
 			}
@@ -104,21 +106,25 @@ var Bullet = function(x, y, direction) {
 		return this.damage;
 	};
 
-	// REMOVE: THIS IS UNNECESARY
-	// tests if two entities intersects using a Square
-	// TODO: move this to Entity class
-	this.hitTest = function(entity) {
-		// TODO: when moving to entity class, delete radius code
-		// it's only used for circled entities
-	  return !(entity.x > this.x + this.radius / 2 || 
-			   entity.x + entity.width < this.x - this.radius / 2 || 
-			   entity.y > this.y + this.radius / 2 ||
-			   entity.y + entity.height < this.y - this.radius / 2);	
-	};
+    this.fragCallback = function() {};
 };
 Bullet.prototype = new Entity();
 
-var Granade = function(x, y, direction) {
+var FragmentationBullet = function(x,y,direction, frags) {
+    this.x = x;
+    this.y = y;
+    this.direction = direction;
+    this.frags = frags;
+    this.divide = 5;
 
+    this.fragCallback = function() {
+        debug("Fragcallback");
+        if (this.frags > 0) {
+            for (var i = 0; i < this.divide; i++) {
+                debug("adding new frag bullets");
+                this.game.addEntity(new FragmentationBullet(this.x, this.y, Math.random() * Math.PI * 2, this.frags - 1));
+            }
+        }
+    };
 };
-Granade.prototype = new Entity();
+FragmentationBullet.prototype = new Bullet(0,0,0);
