@@ -5,6 +5,8 @@ var Weapon = function() {
     this.playerKeyDown = function() {};
     this.lastShootTime = 0;
     this.loadTime = 150;
+    // Constant used for putting a new bullet in the game without killing the shooter.
+    this.outsideSuicideZone = 15; 
 
     this.draw = function(ctx) {
         ctx.drawImage(this.game.resources.images[this.image],this.x,this.y);
@@ -22,8 +24,12 @@ var Pistol = function() {
     this.name = "Pistol";
     this.shoot = function(player) {
         if (!this.canShoot(player)) return;
+
+        var v = new Vector(player.direction, this.outsideSuicideZone);
+        v.originX = player.x;
+        v.originY = player.y;
         
-		player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30), player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN));
+		player.game.addEntity(new Bullet(v.x(), v.y(), player.direction));
 
         this.lastShootTime = player.game.currentTime;
     };
@@ -42,9 +48,13 @@ var Shotgun = function(x, y) {
 
     this.shoot = function(player) {
         if (!this.canShoot(player)) return;
+
+        var v = new Vector(player.direction, this.outsideSuicideZone);
+        v.originX = player.x;
+        v.originY = player.y;
         
         for(var i = -3; i < 3; i++) {
-		    player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30), player.direction == 1 ? player.DIRECTION_UP + i / 15 : player.DIRECTION_DOWN + i / 15));
+		    player.game.addEntity(new Bullet(v.x(), v.y(), player.direction + i / 15));
         }
         this.bullets -= 1;
 
@@ -65,10 +75,16 @@ var MachineGun = function(x, y) {
 
     this.shoot = function(player) {
         if (!this.canShoot(player)) return;
-        
-        for(var i = 0; i < 5; i++) {
-		    player.game.addEntity(new Bullet(player.x, player.y + (player.direction == 1 ? 30 : - 30) + i * 10 * (player.direction == 1 ? 1 : -1), player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN));
+
+        var v = new Vector(player.direction, this.outsideSuicideZone);
+        v.originX = player.x;
+        v.originY = player.y;
+
+        for (var i = 0; i < 5; i++) {
+            v.sum(i*10);
+            player.game.addEntity(new Bullet(v.x(), v.y(), player.direction));   
         }
+
         this.bullets -=5;
 
         this.lastShootTime = player.game.currentTime;
@@ -88,8 +104,12 @@ var FragmentationPistol = function(x, y) {
 
     this.shoot = function(player) {
         if (!this.canShoot(player)) return;
+
+        var v = new Vector(player.direction, this.outsideSuicideZone);
+        v.originX = player.x;
+        v.originY = player.y;
         
-        player.game.addEntity(new FragmentationBullet(player.x, player.y + (player.direction == 1 ? 30 : - 30), player.direction == 1 ? player.DIRECTION_UP : player.DIRECTION_DOWN, 2));
+        player.game.addEntity(new FragmentationBullet(v.x(), v.y(), player.direction, 2));
         this.bullets -= 1;
 
         this.lastShootTime = player.game.currentTime;

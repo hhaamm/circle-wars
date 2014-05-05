@@ -14,8 +14,8 @@ var Bullet = function(x, y, direction) {
     this.damage = 10;
 	
 	this.process = function() {
-        this.x += - Math.cos(this.direction) * this.speed;
-		this.y += Math.sin(this.direction) * this.speed;
+        this.x += Math.cos(this.direction) * this.speed;
+		this.y += - Math.sin(this.direction) * this.speed;
 
 		var _self = this;
 		

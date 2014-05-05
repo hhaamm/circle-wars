@@ -14,6 +14,8 @@ var Player = function(x, y, direction, name, keyboard) {
     this.keyboard = keyboard;
     this.DIRECTION_UP = 90 * Math.PI / 180;
     this.DIRECTION_DOWN = 270 * Math.PI / 180;
+    this.DIRECTION_LEFT = 180 * Math.PI / 180;
+    this.DIRECTION_RIGHT = 0;
     this.weapon = null;
     this.basicWeapon = new Pistol();
 	
@@ -62,18 +64,22 @@ var Player = function(x, y, direction, name, keyboard) {
 		case this.keyboard.left: 
 			if (this.canMove(this.x - 10, this.y))
 				this.x -= 10;
+            this.direction = this.DIRECTION_LEFT;
 			break;
 		case this.keyboard.right:
 			if (this.canMove(this.x + 10, this.y))
 				this.x += 10;
+            this.direction = this.DIRECTION_RIGHT;
 			break;
 		case this.keyboard.forward:
 			if (this.canMove(this.x, this.y - 10))
 				this.y -= 10 + this.direction;
+            this.direction = this.DIRECTION_UP;
 			break;
 		case this.keyboard.backward:
 			if (this.canMove(this.x, this.y + 10))
-				this.y += 10 * this.direction;
+				this.y += 10 + this.direction;
+            this.direction = this.DIRECTION_DOWN;
 			break;
         case this.keyboard.shoot: // space
 			this.shoot(); break;				
