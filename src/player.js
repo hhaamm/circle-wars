@@ -57,11 +57,7 @@ var Player = function(x, y, direction, name, keyboard) {
         this.weapon = weapon;
     };
 	
-	this.onKeyDown = function(evt) {};
-	
-	this.onKeyUp = function(evt) {
-		// console.log(evt.keyCode);
-
+	this.onKeyDown = function(evt) {
         switch(evt.keyCode) {
 		case this.keyboard.left: 
 			if (this.canMove(this.x - 10, this.y))
@@ -79,7 +75,7 @@ var Player = function(x, y, direction, name, keyboard) {
 			if (this.canMove(this.x, this.y + 10))
 				this.y += 10 * this.direction;
 			break;
-		case this.keyboard.shoot: // space
+        case this.keyboard.shoot: // space
 			this.shoot(); break;				
 		}
 
@@ -91,7 +87,9 @@ var Player = function(x, y, direction, name, keyboard) {
                 _self.addWeapon(entity);
             }
         });
-	};
+    };
+	
+	this.onKeyUp = function(evt) { };
 	
 	/*
 	 * Tries to test move to a certain position. Returns false if there's an object blocking the movement.

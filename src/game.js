@@ -102,6 +102,10 @@ var Game = function(ctx, width, height) {
 	this.run = function() {	
 		this.clear();
 		var _self = this;
+
+        // Entities can use this time
+        this.currentTime = new Date().getTime();
+        
 		$(this.entities).each(function() {			
 			this.process();
 		});
