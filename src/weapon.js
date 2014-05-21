@@ -22,6 +22,7 @@ Weapon.prototype = new Entity();
 var Pistol = function() {
     this.bullets = -1; // Pistol has infinite bullets
     this.name = "Pistol";
+    this.loadTime = 150;
     this.shoot = function(player) {
         if (!this.canShoot(player)) return;
 
@@ -168,4 +169,4 @@ var MissileLauncher = function(x, y) {
 };
 MissileLauncher.prototype = new Weapon();
 
-var weaponTypes = [MachineGun, Shotgun, FragmentationPistol, ArmagedonPistol];
+var weaponTypes = [MachineGun, Shotgun, FragmentationPistol, ArmagedonPistol, MissileLauncher];
