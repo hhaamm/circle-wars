@@ -26,44 +26,19 @@ var Bullet = function(x, y, direction) {
 				var distanceY = _self.y - entity.y;
 				var distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
 				
-				if (distance < _self.radius + entity.radius) {					
-					entity.hit(_self.getDamage());
-					// Removing itself... we don't want to hit the player 2 times!
-					_self.game.removeEntity(_self);
+				if (distance < _self.radius + entity.radius) {
+					_self.onEntityHit(entity);
+                    // Removing itself... we don't want to hit the player 2 times!
+		            _self.game.removeEntity(_self);
                     _self.fragCallback();
 				}
 			}
 			
-			if (entity.type == "wall") {
-				/* COMPLEX HITTEST
-				// getting closest point to the center of the square
-				// square center point
-				var pX = entity.x - (entity.width / 2);
-				var pY = entity.y - (entity.height / 2);
-				
-				// vector from circle (bullet)
-				var vX = pX - this.x;
-				var vY = pY - this.y;
-				var magV = Math.sqrt(vX*vX + vY*vY);
-				
-				// closest point to the square
-				var aX = this.x + vX / magV * this.radius;
-				var aY = this.y + vY / magV * this.radius;
-				
-				// test if the point is inside the square
-				// "hitTest"
-				if (aX >= entity.x &&
-					aX <= entity.x + entity.width &&
-					aY >= entity.y &&
-					aY <= entity.y + entity.height) {
-						console.log("We hit the wall");
-				}
-				*/
-				
+			if (entity.type == "wall") {				
 				// simple hittest.. considering bullet as a square
 				if (_self.hitTest(entity)) {
 					debug("Wall hit");
-					entity.hit(_self.getDamage());
+                    _self.onEntityHit(entity);
 					
 					if (entity.bounceChance * _self.bounceChance > Math.random()) {
 						debug("Bounce");
@@ -82,11 +57,15 @@ var Bullet = function(x, y, direction) {
 
             if (entity.type == "weapon") {
 				if (_self.hitTest(entity)) {
-                    _self.game.removeEntity(_self);
-                    _self.game.removeEntity(entity);
+                    _self.onEntityHit(entity);
+                    this.game.removeEntity(this);
                 }
             }
 		});
+
+        if (this.aceleration) {
+            this.speed += this.aceleration;
+        }
 		
 		if (this.x < 0 || this.x > this.game.WIDTH || this.y < 0 || this.y > this.game.HEIGHT) {
 			// Removing the bullet to avoid memory issues if the bullet is outside the borders
@@ -105,6 +84,20 @@ var Bullet = function(x, y, direction) {
 	this.getDamage = function() {
 		return this.damage;
 	};
+
+    /*
+     * Callback function when the bullet "touches" an entity. 
+     * You can override this if you want to customize the effect of touching an entity 
+     * (i.e. making an explosion)
+     */
+    this.onEntityHit = function(entity) {
+        if (entity.type == "weapon") {
+            this.game.removeEntity(entity);
+            return;
+        }
+        
+		entity.hit(this.getDamage());
+    };
 
     this.fragCallback = function() {};
 };
@@ -128,3 +121,34 @@ var FragmentationBullet = function(x,y,direction, frags) {
     };
 };
 FragmentationBullet.prototype = new Bullet(0,0,0);
+
+/*
+ * Creates a new missile
+ */
+var Missile = function(x, y, direction) {
+	this.x = x;
+	this.y = y;
+	this.direction = direction;
+	this.type = "bullet";
+	this.radius = 10;
+	this.bounceChance = 0.2;
+    this.speed = 2;
+    this.damage = 50;
+    this.aceleration = 0.1;
+
+    this.onEntityHit = function(entity) {
+        if (entity.type == "weapon") {
+            this.game.removeEntity(entity);            
+        }
+
+        // TODO: improve this
+        // we need this because explosion actually doesn't hit the walls.. but it should!
+        // Imagine glass explosion! Crash, crash, crash!
+        if (entity.type == "wall") {
+            entity.hit(this.getDamage());
+        }       
+        
+        this.game.addEntity(new Explosion(this.x,this.y,this.getDamage(),60,5));
+    };
+};
+Missile.prototype = new Bullet(0,0,0);

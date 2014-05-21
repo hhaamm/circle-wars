@@ -142,4 +142,30 @@ var ArmagedonPistol = function(x, y) {
 };
 ArmagedonPistol.prototype = new Weapon();
 
+var MissileLauncher = function(x, y) {
+    this.bullets = 5;
+    this.name = "Missile Launcher";
+    this.image = "shotgun";
+    this.width = 100;
+    this.height = 24;
+    this.x = x;
+    this.y = y;
+    this.loadTime = 1000;
+    this.outsideSuicideZone = 30; 
+
+    this.shoot = function(player) {
+        if (!this.canShoot(player)) return;
+
+        var v = new Vector(player.direction, this.outsideSuicideZone);
+        v.originX = player.x;
+        v.originY = player.y;
+        
+        player.game.addEntity(new Missile(v.x(), v.y(), player.direction, 4));
+        this.bullets -= 1;
+
+        this.lastShootTime = player.game.currentTime;
+    };
+};
+MissileLauncher.prototype = new Weapon();
+
 var weaponTypes = [MachineGun, Shotgun, FragmentationPistol, ArmagedonPistol];
