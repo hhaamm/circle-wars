@@ -33,8 +33,8 @@ var Game = function(ctx, width, height) {
 		this.player2 = new Player(500, 400, 2, "Player 2", keyboard2);
 
         // only for debug purpuses
-        // this.player1.weapon = new FragmentationPistol(0,0);
-        // this.player2.weapon = new FragmentationPistol(0,0);
+        // this.player1.weapon = new ArmagedonPistol(0,0);
+        // this.player2.weapon = new ArmagedonPistol(0,0);
 		
 		var _self = this;
 		$(document).keydown(function(evt) {
@@ -81,7 +81,20 @@ var Game = function(ctx, width, height) {
 			}			
 		}
 
-        var _self = this;
+        // house building
+        /*
+        for (var i= 0; i < 8; i++) {
+            this.addEntity(new Wall(100+i*20, 140, material));
+            this.addEntity(new Wall(100+i*20, 300, material));
+        }
+        for (var j = 0;j <8; j++) {
+            this.addEntity(new Wall(100, 140+j*20, material));
+            if (j % 2 == 0) {
+                this.addEntity(new Wall(240, 140+j*20, material));
+            } else {
+                this.addEntity(new Wall(240, 140+j*20, GlassMaterial));
+            }
+        }*/
 
         this.resources.loadResources(function() {
 		    _self.runInterval = setIntervalWithContext(_self.run, 10, _self);

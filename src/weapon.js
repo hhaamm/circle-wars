@@ -93,7 +93,7 @@ var MachineGun = function(x, y) {
 MachineGun.prototype = new Weapon();
 
 var FragmentationPistol = function(x, y) {
-    this.bullets = 3;
+    this.bullets = 4;
     this.name = "Frag";
     this.image = "shotgun";
     this.width = 100;
@@ -117,4 +117,29 @@ var FragmentationPistol = function(x, y) {
 };
 FragmentationPistol.prototype = new Weapon();
 
-var weaponTypes = [MachineGun, Shotgun, FragmentationPistol];
+var ArmagedonPistol = function(x, y) {
+    this.bullets = 1;
+    this.name = "Armagedon";
+    this.image = "shotgun";
+    this.width = 100;
+    this.height = 24;
+    this.x = x;
+    this.y = y;
+    this.loadTime = 1000;
+
+    this.shoot = function(player) {
+        if (!this.canShoot(player)) return;
+
+        var v = new Vector(player.direction, this.outsideSuicideZone);
+        v.originX = player.x;
+        v.originY = player.y;
+        
+        player.game.addEntity(new FragmentationBullet(v.x(), v.y(), player.direction, 4));
+        this.bullets -= 1;
+
+        this.lastShootTime = player.game.currentTime;
+    };
+};
+ArmagedonPistol.prototype = new Weapon();
+
+var weaponTypes = [MachineGun, Shotgun, FragmentationPistol, ArmagedonPistol];
