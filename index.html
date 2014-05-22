@@ -1,22 +1,42 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-		<meta content="text/html; charset=utf-8" http-equiv="content-type">
-		<title>Circle Wars</title>
-		<script type="text/javascript" src="jquery-1.11.0.js"></script>
-        <script type="text/javascript" src="src/vector.js"></script>
-        <script type="text/javascript" src="src/resource_loader.js"></script>
-	    <script type="text/javascript" src="src/game.js"></script>
-        <script type="text/javascript" src="src/entity.js"></script>
-        <script type="text/javascript" src="src/weapon.js"></script>
-        <script type="text/javascript" src="src/player.js"></script>
-        <script type="text/javascript" src="src/wall.js"></script>
-        <script type="text/javascript" src="src/explosion.js"></script>
-        <script type="text/javascript" src="src/bullet.js"></script>
-		<script type="text/javascript" src="src/script.js"></script>
-	</head>
-	<body>
-		<h1>Circle Wars</h1>
-		<canvas id="canvas" width="1000" height="500"></canvas>
-	</body>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+    <title>Circle Wars</title>
+    <script type="text/javascript" src="jquery-1.11.0.js"></script>
+    <script type="text/javascript" src="src/vector.js"></script>
+    <script type="text/javascript" src="src/resource_loader.js"></script>
+    <script type="text/javascript" src="src/game.js"></script>
+    <script type="text/javascript" src="src/entity.js"></script>
+    <script type="text/javascript" src="src/weapon.js"></script>
+    <script type="text/javascript" src="src/player.js"></script>
+    <script type="text/javascript" src="src/wall.js"></script>
+    <script type="text/javascript" src="src/explosion.js"></script>
+    <script type="text/javascript" src="src/bullet.js"></script>
+    <script type="text/javascript" src="src/script.js"></script>
+    <style>
+     .gameMenu {
+     margin-left: auto;
+     margin-right: auto;
+     width: 500px;
+     text-align: center;
+     }
+    </style>
+  </head>
+  <body>    
+    <div id="stageInit" class="stage gameMenu">
+      <h1>Circle Wars</h1>
+      <p>Durante muchos años, los círculos estuvieron en paz. La guerra contra los cuadrados unificó a las facciones de círculos a lo largo de toda la tierra. Pero una vez que lograron derrotar a los cuadrados, después de su rendición unilateral, impusieron sobre ellos una paz asfixiante. Pero entonces, las viejas rencillas entre las diferentes facciones de círculos volvieron a la luz. La paz no podía durar...</p>
+      <input type="button" id="newGameBtn" value="New Game"/>
+      <input type="button" value="Ranking" disabled/>
+    </div>
+    <div id="stageCreateGame" class="stage gameMenu">
+      <h1>Circle Wars</h1>
+
+      <input type="button" id="startGameBtn" value="Start Game"/>
+    </div>
+    <div id="stageGame" class="stage">
+      <canvas id="canvas" width="1000" height="500"></canvas>
+    </div>
+  </body>
 </html>
