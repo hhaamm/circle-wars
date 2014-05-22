@@ -133,13 +133,15 @@ var Game = function(ctx, width, height, opts) {
 
         // Entities can use this time
         this.currentTime = new Date().getTime();
-        
-		$(this.entities).each(function() {			
-			this.process();
-		});
-		$(this.entities).each(function() {			
-			this.draw(_self.ctx);
-		});
+
+        // Performant for loops
+        var i;
+        for(i = 0; i < this.entities.length; i++) {
+            this.entities[i].process();
+        }
+        for(i = 0; i < this.entities.length; i++) {
+            this.entities[i].draw(this.ctx);
+        }
 		
 		this.drawUI();
 		
