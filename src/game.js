@@ -1,4 +1,4 @@
-var Game = function(ctx, width, height) {
+var Game = function(ctx, width, height, opts) {
 	this.ctx = ctx;
 	this.WIDTH = width;
 	this.HEIGHT = height;	
@@ -15,6 +15,16 @@ var Game = function(ctx, width, height) {
     // Game finished callback
     // Use this from outside to be noticed that the game has finished
     this.onGameOver = function(){};
+
+    // Options handling
+    // TODO: unify default values with main menu
+    var defaults = {
+        maxWalls: 50,
+        weaponGeneration: 0.999,
+        minWalls: 0
+    };
+    this.opts = opts || {};
+    this.opts = $.extend({}, defaults, this.opts);
 	
 	/* PUBLIC FUNCTIONS */
 	this.init = function() {
@@ -68,7 +78,8 @@ var Game = function(ctx, width, height) {
 		// Add random walls (not in the player's square!)
 		// TODO: move this code to a GameConstructorObject and have many game constructors (or map constructors)
         // using composition
-		var walls = Math.floor(Math.random() * 50);
+        debug(this.opts);
+		var walls = Math.floor(Math.random() * (this.opts.maxWalls - this.opts.minWalls - 1)) + this.opts.minWalls;
 		var sampleWall = new Wall(0,0, {});
 		debug("Walls: "+walls);
 		var x, y;
@@ -162,7 +173,7 @@ var Game = function(ctx, width, height) {
 
         // Random weapon generation
         // TODO: make this exponential with the number of weapons available in the map!
-        if (Math.random() > 0.999) {
+        if (Math.random() > this.opts.weaponGeneration) {
             debug("Added weapon");
             var weaponConstructor = weaponTypes[Math.floor(Math.random()*weaponTypes.length)];
             var weapon = new weaponConstructor(Math.floor(Math.random()*this.WIDTH), Math.floor(Math.random()*this.HEIGHT));

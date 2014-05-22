@@ -18,8 +18,15 @@ debug = function(message) {
 
 (function() {
     var startGame = function() {
+        var opts = {};
+        opts["minWalls"] = parseInt($("#createGameForm [name='minWalls']").val());
+        opts["maxWalls"] = parseInt($("#createGameForm [name='maxWalls']").val());
+        opts["weaponGeneration"] = parseFloat($("#createGameForm [name='weaponGeneration']").val());
+
+        console.log(opts);
+        
         var ctx = $('#canvas')[0].getContext("2d");
-        var game = new Game(ctx, $('#canvas').attr("width"), $('#canvas').attr("height"));
+        var game = new Game(ctx, $('#canvas').attr("width"), $('#canvas').attr("height"), opts);
 
         game.init();
 

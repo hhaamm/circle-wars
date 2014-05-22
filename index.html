@@ -21,6 +21,16 @@
        width: 500px;
        text-align: center;
      }
+     .gameMenu form {
+       text-align: left;
+       
+     }
+     .gameMenu form label {
+       display: block;
+     }
+     .gameMenu form label > * {
+       float: right;
+     }
      #gameEndMenu {
        position: absolute;       
        text-align: center;
@@ -37,19 +47,31 @@
        -webkit-border-radius: 10px;
        -moz-border-radius: 10px;
        border-radius: 10px;
-     }
+     }     
     </style>
   </head>
   <body>
     <div id="stageInit" class="stage gameMenu">
       <h1>Circle Wars</h1>
-      <p>Durante muchos años, los círculos estuvieron en paz. La guerra contra los cuadrados unificó a las facciones de círculos a lo largo de toda la tierra. Pero una vez que lograron derrotar a los cuadrados, después de su rendición unilateral, impusieron sobre ellos una paz asfixiante. Pero entonces, las viejas rencillas entre las diferentes facciones de círculos volvieron a la luz. La paz no podía durar...</p>
+      <p>For so many years, the circles had peace. The war between the squares unified the circle fractions along the whole Earth. But once they could defeat the squares, after their unilateral surrender, the old little fights between different circle factions back to the light. The peace won't last...</p>
       <input type="button" id="newGameBtn" value="New Game"/>
       <input type="button" value="Ranking" disabled/>
     </div>
     <div id="stageCreateGame" class="stage gameMenu">
       <h1>Circle Wars</h1>
-
+      <form id="createGameForm">
+        <label>Min walls
+          <input name="minWalls" type="numeric" value="1">
+        </label>
+        
+        <label>Max walls
+          <input name="maxWalls" type="numeric" value="50">          
+        </label>
+        
+        <label>Weapon (lower = more)
+          <input name="weaponGeneration" type="numeric" value="0.999">
+        </label>
+      </form>
       <input type="button" id="startGameBtn" value="Start Game"/>
     </div>
     <div id="stageGame" class="stage">
