@@ -16,14 +16,31 @@
     <script type="text/javascript" src="src/script.js"></script>
     <style>
      .gameMenu {
-     margin-left: auto;
-     margin-right: auto;
-     width: 500px;
-     text-align: center;
+       margin-left: auto;
+       margin-right: auto;
+       width: 500px;
+       text-align: center;
+     }
+     #gameEndMenu {
+       position: absolute;       
+       text-align: center;
+       background: transparent;
+       width: 100%;
+       top: 30%;
+     }
+     #gameEndMenu .container {
+       margin-left: auto;
+       margin-right: auto;
+       width: 200px;
+       background: black;
+       padding: 1em;
+       -webkit-border-radius: 10px;
+       -moz-border-radius: 10px;
+       border-radius: 10px;
      }
     </style>
   </head>
-  <body>    
+  <body>
     <div id="stageInit" class="stage gameMenu">
       <h1>Circle Wars</h1>
       <p>Durante muchos años, los círculos estuvieron en paz. La guerra contra los cuadrados unificó a las facciones de círculos a lo largo de toda la tierra. Pero una vez que lograron derrotar a los cuadrados, después de su rendición unilateral, impusieron sobre ellos una paz asfixiante. Pero entonces, las viejas rencillas entre las diferentes facciones de círculos volvieron a la luz. La paz no podía durar...</p>
@@ -36,6 +53,13 @@
       <input type="button" id="startGameBtn" value="Start Game"/>
     </div>
     <div id="stageGame" class="stage">
+      <div id="gameEndMenu" style="display:none">
+        <div class="container">
+          <input type="button" id="newGame2Btn" value="New Game"/><br/>
+          <input type="button" id="restartGameBtn" value="Restart Game"/><br/>
+          <input type="button" id="exitBtn" value="Exit Game"/><br/>
+        </div>
+      </div>
       <canvas id="canvas" width="1000" height="500"></canvas>
     </div>
   </body>

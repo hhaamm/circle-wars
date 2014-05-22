@@ -11,6 +11,10 @@ var Game = function(ctx, width, height) {
 	this.removeEntities = [];
 
     this.resources = new ResourceLoader();
+
+    // Game finished callback
+    // Use this from outside to be noticed that the game has finished
+    this.onGameOver = function(){};
 	
 	/* PUBLIC FUNCTIONS */
 	this.init = function() {
@@ -153,7 +157,7 @@ var Game = function(ctx, width, height) {
 				this.ctx.fillText("Player 2 Wins", 100, 300);	
 			}
 			
-			// TODO: Add restart game button
+            this.onGameOver();
 		}
 
         // Random weapon generation
