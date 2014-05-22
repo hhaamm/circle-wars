@@ -154,7 +154,7 @@ var Game = function(ctx, width, height, opts) {
 		this.removeEntities = [];
 		
 		if (this.player1.life <= 0 || this.player2.life <= 0) {
-			// Game over screen
+			// Game over
 			clearInterval(this.runInterval);
 			
 			this.ctx.fillStyle = "white";
