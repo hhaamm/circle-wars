@@ -96,6 +96,18 @@ var Game = function(ctx, width, height, opts) {
 			}			
 		}
 
+        // TODO: si el armagedon le pega directamente a un usuario entonces +500 a la vida
+        // TODO: manchas de sangre cuando te pega
+        // TODO: make this optional
+        for(i = 0; i < this.WIDTH/20; i++) {
+            this.addEntity(new Wall(i*20, 0, StoneMaterial));
+            this.addEntity(new Wall(i*20, this.HEIGHT - 20, StoneMaterial));
+        }
+        for( i = 0; i < this.HEIGHT/20; i++) {
+            this.addEntity(new Wall(0, i*20, StoneMaterial));
+            this.addEntity(new Wall(this.WIDTH - 20, i*20, StoneMaterial));
+        }	
+
         // house building
         /*
         for (var i= 0; i < 8; i++) {
