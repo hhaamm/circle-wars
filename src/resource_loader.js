@@ -1,15 +1,15 @@
 var ResourceLoader = function() {
     this.imagePaths = {
-        shotgun: "img/shotgun.jpg",
-        ak47: "img/ak47.jpg",
-        frag: "img/frag.jpg",
-        health: "img/health.jpg",
-        machinegun: "img/machinegun.jpg",
-        pistol: "img/pistol.jpg",
-        pistol2: "img/pistol2.jpg",
-        missile: "img/missilelauncher.jpg",
-        heavygun: "img/heavymachinegun.jpg",
-        kevlar: "img/kevlar.jpg"
+        shotgun: "img/shotgun.png",
+        ak47: "img/ak47.png",
+        frag: "img/frag.png",
+        health: "img/health.png",
+        machinegun: "img/machinegun.png",
+        pistol: "img/pistol.png",
+        pistol2: "img/pistol2.png",
+        missile: "img/missilelauncher.png",
+        heavygun: "img/heavymachinegun.png",
+        kevlar: "img/kevlar.png"
     };
     this.images = {};
     this.imagesLoaded = 0;
