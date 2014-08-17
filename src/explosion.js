@@ -1,7 +1,7 @@
-var Explosion = function(x, y, damage, maxRadius = 30, increase = 1) {
-    this.maxRadius = maxRadius;
+var Explosion = function(x, y, damage, maxRadius, increase) {
+    this.maxRadius = maxRadius ? maxRadius : 30;    
     this.damage = damage;
-    this.increase = increase;
+    this.increase = increase ? increase : 1;
     this.radius = 0;
     this.x = x;
     this.y = y;
