@@ -1,4 +1,4 @@
-* Things to implement
-** TODO Allow to move with only pressing keyboard arrows
-** TODO Add a line showing circle direction
-** TODO Add the option of static maps
+* Roadmap
+- [ ] Allow to move with only pressing keyboard arrows
+- [ ] Add a line showing circle direction
+- [ ] Add the option of static maps
