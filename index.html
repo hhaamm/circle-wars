@@ -15,6 +15,9 @@
     <script type="text/javascript" src="src/bullet.js"></script>
     <script type="text/javascript" src="src/script.js"></script>
     <style>
+     .clearfix {
+       clear: both;
+     }
      .gameMenu {
        margin-left: auto;
        margin-right: auto;
@@ -23,16 +26,19 @@
      }
      .gameMenu form {
        text-align: left;
-       
+       clear: both;
      }
-     .gameMenu form label {
-       display: block;
+     .gameMenu form > div > label {
+       float: left;
      }
-     .gameMenu form label > * {
+     .gameMenu form > div > input {
        float: right;
      }
+     .gameMenu form > div {
+       clear: both;
+     }
      #gameEndMenu {
-       position: absolute;       
+       position: absolute;
        text-align: center;
        background: transparent;
        width: 100%;
@@ -47,7 +53,10 @@
        -webkit-border-radius: 10px;
        -moz-border-radius: 10px;
        border-radius: 10px;
-     }     
+     }
+     #startGameBtn {
+       margin-top: 10px;
+     }
     </style>
   </head>
   <body>
@@ -60,18 +69,20 @@
     <div id="stageCreateGame" class="stage gameMenu">
       <h1>Circle Wars</h1>
       <form id="createGameForm">
-        <label>Min walls
+        <div>
+          <label>Min walls</label>
           <input name="minWalls" type="numeric" value="1">
-        </label>
-        
-        <label>Max walls
-          <input name="maxWalls" type="numeric" value="50">          
-        </label>
-        
-        <label>Weapon (lower = more)
+        </div>
+        <div>
+          <label>Max walls</label>
+          <input name="maxWalls" type="numeric" value="50">
+        </div>
+        <div>
+          <label>Weapon (lower = more)</label>
           <input name="weaponGeneration" type="numeric" value="0.999">
-        </label>
+        </div>
       </form>
+      <div class="clearfix"></div>
       <input type="button" id="startGameBtn" value="Start Game"/>
     </div>
     <div id="stageGame" class="stage">
