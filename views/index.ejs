@@ -4,6 +4,9 @@
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
     <title>Circle Wars</title>
     <script type="text/javascript" src="jquery-1.11.0.js"></script>
+	<script type="text/javascript">
+		var serverUrl = "<%= serverUrl %>";
+	</script>
     <script type="text/javascript" src="src/util.js"></script>
     <script type="text/javascript" src="src/vector.js"></script>
     <script type="text/javascript" src="src/resource_loader.js"></script>
@@ -15,7 +18,7 @@
     <script type="text/javascript" src="src/explosion.js"></script>
     <script type="text/javascript" src="src/bullet.js"></script>
     <script type="text/javascript" src="src/script.js"></script>
-    <script src="http://circlewars-hhaamm.rhcloud.com:8000/socket.io/socket.io.js"></script>
+    <script src="<%= serverUrl %>/socket.io/socket.io.js"></script>
     <style>
      .clearfix {
        clear: both;

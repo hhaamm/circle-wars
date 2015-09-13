@@ -21,6 +21,7 @@ function init() {
 
     var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
     var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080;
+    var serverUrl = process.env.OPENSHIFT_NODEJS_IP ? "http://circlewars-hhaamm.rhcloud.com:8000" : "http://localhost:8080";
     app.set('port', port);
     app.set('ip', ip);
 
@@ -30,7 +31,7 @@ function init() {
     app.set('view engine', 'ejs');
 
     app.get('/', function (req, res) {
-        res.render('index', { ip: ip, port: port});
+        res.render('index', { ip: ip, port: port, serverUrl: serverUrl});
     });
 
     var http2 = http.Server(app);

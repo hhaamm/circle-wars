@@ -19,7 +19,8 @@
     };
 
     var startMultiplayerGame = function() {
-        var socket = io.connect("http://circlewars-hhaamm.rhcloud.com:8000", {transports: ["websocket"]});
+        // serverUrl is defined in index.ejs
+        var socket = io.connect(serverUrl, {transports: ["websocket"]});
 
         var opts = {};
         // opts["minWalls"] = parseInt($("#createGameForm [name='minWalls']").val());
