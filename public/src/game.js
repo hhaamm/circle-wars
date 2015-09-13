@@ -248,7 +248,6 @@ var Game = function(ctx, width, height, opts) {
 
         // Random weapon generation
         // TODO: make this exponential with the number of weapons available in the map!
-        console.log(this.getEntityCount("weapon"));
         if (Math.random() > this.opts.weaponGeneration && this.getEntityCount("weapon") < 10) {
             debug("Added weapon");
             var weaponConstructor = weaponTypes[Math.floor(Math.random()*weaponTypes.length)];
