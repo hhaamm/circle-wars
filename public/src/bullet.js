@@ -2,6 +2,7 @@ if (typeof window == 'undefined') {
     Explosion = require('./explosion');
 }
 
+var MAX_RANDOM_NUMBERS = 100;
 
 /*
  * Creates a new Bullet
@@ -17,6 +18,8 @@ var Bullet = function(x, y, direction) {
 	this.bounceChance = 1;
     this.speed = 4;
     this.damage = 10;
+    // Used to avoid asking to the server for new random numbers
+    this.randomNumbers = null;
 
 	this.process = function() {
         this.x += Math.cos(this.direction) * this.speed;
@@ -42,21 +45,39 @@ var Bullet = function(x, y, direction) {
 			if (entity.type == "wall") {
 				// simple hittest.. considering bullet as a square
 				if (_self.hitTest(entity)) {
-					debug("Wall hit");
+					// debug("Wall hit");
                     _self.onEntityHit(entity);
 
-					if (entity.bounceChance * _self.bounceChance > Math.random()) {
-						debug("Bounce");
-                        // changes direction randomly
-                        // TODO: find some way to do this more efficient
-                        //       if direction is against the wall, then it will be computed again
-                        _self.direction = Math.random() * Math.PI * 2;
-                        // reduces damage, minimun is 1
-                        _self.damage = Math.ceil(_self.damage * Math.random());
-					} else {
-						_self.game.removeEntity(_self);
+                    // A bullet shouldn't bounce more than MAX_.. times
+                    if (_self.randomNumbers && _self.randomNumbers.length) {
+					    if (entity.bounceChance * _self.bounceChance > _self.randomNumbers.pop()) {
+						    debug("Bounce");
+                            // changes direction randomly
+                            // TODO: find some way to do _self more efficient
+                            //       if direction is against the wall, then it will be computed again
+                            //TODO: IMPORTAT there's a desincronization here
+                            //TODO: this is calculated a different number of times depending on the machine
+                            if (_self.randomNumbers && _self.randomNumbers.length) {
+                                _self.direction = _self.randomNumbers.pop() * Math.PI * 2;
+                                console.log(_self.randomNumbers.length);
+                                console.log(_self.randomNumbers[_self.randomNumbers.length -1]);
+                                console.log(direction);
+                                // reduces damage, minimun is 1
+                                _self.damage = Math.ceil(_self.damage * Math.random());
+                            } else {
+                                _self.direction = Math.random() * Math.PI * 2;
+                                // reduces damage, minimun is 1
+                                _self.damage = Math.ceil(_self.damage * _self.randomNumbers.pop());
+                            }
+
+					    } else {
+						    _self.game.removeEntity(_self);
+                            _self.fragCallback();
+					    }
+                    } else {
+                        _self.game.removeEntity(_self);
                         _self.fragCallback();
-					}
+                    }
 				}
 			}
 
@@ -105,6 +126,13 @@ var Bullet = function(x, y, direction) {
     };
 
     this.fragCallback = function() {};
+
+    this.generateRandomNumbers = function() {
+        this.randomNumbers = [];
+        for(var i = 0; i < MAX_RANDOM_NUMBERS; i++) {
+            this.randomNumbers.push(Math.random());
+        }
+    };
 };
 Bullet.prototype = new Entity();
 
@@ -120,7 +148,7 @@ var FragmentationBullet = function(x,y,direction, frags) {
         if (this.frags > 0) {
             for (var i = 0; i < this.divide; i++) {
                 debug("adding new frag bullets");
-                this.game.addEntity(new FragmentationBullet(this.x, this.y, Math.random() * Math.PI * 2, this.frags - 1));
+                this.game.addEntity(new FragmentationBullet(this.x, this.y, ((this.randomNumbers && this.randomNumbers.length) ? this.randomNumbers.pop()  : Math.random()) * Math.PI * 2, this.frags - 1));
             }
         }
     };
@@ -158,7 +186,10 @@ var Missile = function(x, y, direction) {
 };
 Missile.prototype = new Bullet(0,0,0);
 
+var bulletTypes = [Bullet, FragmentationBullet, Missile];
+
 if (typeof window == 'undefined') {
     module.exports.Missile = Missile;
     module.exports.Bullet = Bullet;
+    module.exports.bulletTypes = bulletTypes;
 }

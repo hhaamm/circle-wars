@@ -35,7 +35,7 @@ var Pistol = function() {
         v.originX = player.x;
         v.originY = player.y;
 
-		player.game.addEntity(new Bullet(v.x(), v.y(), player.direction));
+		player.game.addEntity(new Bullet(v.x(), v.y(), player.direction), true);
 
         this.lastShootTime = player.game.currentTime;
     };

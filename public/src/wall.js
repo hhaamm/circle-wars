@@ -8,6 +8,7 @@ var Wall = function(x, y, material) {
 	this.material = material;
 	this.life = material.life;
 	this.bounceChance = material.bounceChance;
+    this.randomNumbers = null;
 
 	this.draw = function(ctx) {
 		ctx.fillStyle = this.material.fillStyle;
@@ -22,9 +23,11 @@ var Wall = function(x, y, material) {
 			this.life = 0;
 
             // Explosion animation
-            if (this.material.explosionChance > Math.random()) {
+            var rnd1 = this.randomNumbers && this.randomNumbers.length ? this.randomNumbers.pop() : Math.random();
+            if (this.material.explosionChance > rnd1) {
                 // TODO: improve
-                this.game.addEntity(new Explosion(this.x + this.width / 2, this.y + this.height / 2, Math.floor(Math.random() * this.material.life)));
+                var rnd2 = this.randomNumbers && this.randomNumbers.length ? this.randomNumbers.pop() : Math.random();
+                this.game.addEntity(new Explosion(this.x + this.width / 2, this.y + this.height / 2, Math.floor( rnd2 * this.material.life)));
             }
 		};
 	};

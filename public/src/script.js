@@ -60,16 +60,15 @@
 			return false;
 		});
 
+        //TODO: move all this code to client.js
         game.addEntity(player1);
         game.players.push(player1);
 
         game.initClient(player1);
-        // game.initClient(player1);
-        // game.initServer();
 
         game.onGameOver = function() {
-            $("#gameEndMenu").show();
-            delete game;
+            //TODO: let the server know we died
+            window.location.href = '/over';
         };
 
         socket.on("state", function(data) {
@@ -137,6 +136,24 @@
             console.log(weapon);
             var player = game.getPlayer(data.playerId);
             player.addWeapon(weapon);
+        });
+        socket.on("new bullet", function(data) {
+            var v = new Vector(data.direction, data.outsideSuicideZone);
+            v.originX = data.position.x;
+            v.originY = data.position.y;
+            console.log(data);
+            var bulletType = bulletTypes[data.bulletTypeIndex];
+            var bullet = new bulletType(v.x(), v.y(), data.direction, false);
+
+            bullet.id = data.id;
+            bullet.randomNumbers = data.randomNumbers;
+            console.log(bullet);
+            console.log("new bullet");
+            game.addEntity(bullet, false);
+        });
+
+        socket.on("bullet bounce", function(data) {
+
         });
     };
 

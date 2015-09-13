@@ -34,6 +34,10 @@ function init() {
         res.render('index', { ip: ip, port: port, serverUrl: serverUrl});
     });
 
+    app.get('/over', function (req, res) {
+        res.render('over', {});
+    });
+
     var http2 = http.Server(app);
     socket = io.listen(http2);
 
@@ -70,6 +74,7 @@ function onSocketConnection (client) {
     client.on("new player", onNewPlayer);
     client.on("move player", onMovePlayer);
     client.on("weapon taken", onWeaponTaken);
+    client.on("new bullet", onNewBullet);
 
     var walls = [];
     var wallEntities = game.getEntities("wall");
@@ -77,7 +82,8 @@ function onSocketConnection (client) {
         walls.push({
             material: wallEntities[i].material,
             x: wallEntities[i].x,
-            y: wallEntities[i].y
+            y: wallEntities[i].y,
+            randomNumbers: wallEntities[i].randomNumbers
         });
     }
     var weapons = [];
@@ -146,3 +152,12 @@ function onMovePlayer(data) {
     util.log("Player " + data.id + " moved");
     this.broadcast.emit("move player", {id: data.id, position: {x: data.position.x, y: data.position.y}});
 };
+
+function onNewBullet(bulletData) {
+    util.log("New bullet");
+    this.broadcast.emit("new bullet", bulletData);
+}
+
+function onBulletGone(bulletId) {
+
+}

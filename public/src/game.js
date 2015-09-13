@@ -7,6 +7,7 @@ if (typeof window == 'undefined') {
     var WeaponModule = require("./weapon.js");
     weaponTypes = WeaponModule.weaponTypes;
     uuid = require("node-uuid");
+    Client = require("./client.js");
 }
 
 var Game = function(ctx, width, height, opts) {
@@ -177,15 +178,31 @@ var Game = function(ctx, width, height, opts) {
 
         // but we should do all of that in the interval?
 
+        // TODO: init socket here?
+
+        this.client = new Client(this, this.socket);
+
         this.resources = new ResourceLoader();
         this.resources.loadResources(function() {
 		    _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
         });
     };
 
-	this.addEntity = function(entity) {
+	this.addEntity = function(entity, sendToServer) {
 		entity.setGame(this);
 		this.entities.push(entity);
+
+        if (this.isClient && sendToServer) {
+            switch (entity.type) {
+                case "bullet":
+                console.log(entity);
+                console.log("Sending bullet to server");
+                entity.id = uuid.v1();
+                entity.generateRandomNumbers();
+                this.client.addBullet(entity);
+                break;
+            }
+        }
 	};
 
 	// Remove entity after processing all other entities
