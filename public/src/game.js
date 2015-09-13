@@ -268,12 +268,16 @@ var Game = function(ctx, width, height, opts) {
 
             this.onGameOver();
 		}
+        // Excepto cuando el jugador muere
+        if (this.isClient && this.player1.life <= 0) {
+            this.onGameOver();
+        }
 
         // Random weapon generation
         // TODO: make this exponential with the number of weapons available in the map!
-        if (Math.random() > this.opts.weaponGeneration && this.getEntityCount("weapon") < 10 && !this.isClient) {
+        if (!this.isClient && Math.random() > this.opts.weaponGeneration && this.getEntityCount("weapon") < 10) {
             debug("Added weapon");
-            var weaponTypeIndex = Math.floor(Math.random()*weaponTypes.length);
+            var weaponTypeIndex = Math.floor(Math.random() * weaponTypes.length);
 
             var weapon = this.addWeapon(weaponTypeIndex, null, null);
 
@@ -301,6 +305,7 @@ var Game = function(ctx, width, height, opts) {
             weapon.x -= weapon.width / 2;
             weapon.y -= weapon.height / 2;
             weapon.id = uuid.v1();
+            weapon.weaponTypeIndex = weaponTypeIndex;
         } else {
             weapon = new weaponConstructor(x, y);
             weapon.id = id;
@@ -387,8 +392,13 @@ var Game = function(ctx, width, height, opts) {
         var player = this.getPlayer(playerId);
 
         console.log("removePlayer. Index: " + this.players.indexOf(player));
-        this.players.splice(this.players.indexOf(player));
-        this.entities.splice(this.entities.indexOf(player));
+        if (this.players.indexOf(player) !== -1) {
+            this.players.splice(this.players.indexOf(player), 1);
+        }
+        if (this.entities.indexOf(player) !== -1) {
+            this.entities.splice(this.entities.indexOf(player), 1);
+        }
+        console.log("Number of players: " + this.players.length);
     };
 
     this.trigger = function(triggerName, data) {

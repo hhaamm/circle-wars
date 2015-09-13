@@ -6,8 +6,7 @@ var util = require("util"),
     Util = require("./public/src/util.js"),
     Wall = require("./public/src/wall.js").Wall;
 
-var
-    fs = require('fs');
+var fs = require('fs');
 
 var express = require('express');
 
@@ -76,33 +75,7 @@ function onSocketConnection (client) {
     client.on("weapon taken", onWeaponTaken);
     client.on("new bullet", onNewBullet);
 
-    var walls = [];
-    var wallEntities = game.getEntities("wall");
-    for(var i = 0; i < wallEntities.length; i++) {
-        walls.push({
-            material: wallEntities[i].material,
-            x: wallEntities[i].x,
-            y: wallEntities[i].y,
-            randomNumbers: wallEntities[i].randomNumbers
-        });
-    }
-    var weapons = [];
-    var players = [];
-    for(i = 0; i < game.players.length; i++) {
-        players.push({
-            x: game.players.x,
-            y: game.players.y,
-            name: "New Player",
-            id: game.players.id
-        });
-    }
-    this.emit("state", {
-        players: players,
-        weapons: weapons,
-        walls: walls,
-        opts: game.opts,
-        id: client.id
-    });
+    __emitState.call(this, client);
 };
 
 function onWeaponTaken(data) {
@@ -160,4 +133,49 @@ function onNewBullet(bulletData) {
 
 function onBulletGone(bulletId) {
 
+}
+
+function __emitState(client) {
+    var walls = [];
+    var wallEntities = game.getEntities("wall");
+    console.log("Walls: " + wallEntities.length);
+    for(var i = 0; i < wallEntities.length; i++) {
+        walls.push({
+            material: wallEntities[i].material,
+            x: wallEntities[i].x,
+            y: wallEntities[i].y,
+            randomNumbers: wallEntities[i].randomNumbers
+        });
+    }
+
+    var weaponEntities = game.getEntities("weapon");
+    var weapons = [];
+    console.log("Weapons: " + weaponEntities.length);
+    for(i = 0; i < weaponEntities.length; i++) {
+        weapons.push({
+            weaponTypeIndex: weaponEntities[i].weaponTypeIndex,
+            position: {
+                x: weaponEntities[i].x,
+                y: weaponEntities[i].y
+            },
+            id: weaponEntities[i].id
+        });
+    }
+
+    var players = [];
+    for(i = 0; i < game.players.length; i++) {
+        players.push({
+            x: game.players.x,
+            y: game.players.y,
+            name: "New Player",
+            id: game.players.id
+        });
+    }
+    this.emit("state", {
+        players: players,
+        weapons: weapons,
+        walls: walls,
+        opts: game.opts,
+        id: client.id
+    });
 }

@@ -90,6 +90,14 @@
                 game.addPlayerIfNotPresent(player);
             }
 
+            console.log("weapons");
+            console.log(data.weapons);
+            for(i = 0; i < data.weapons.length; i++) {
+                var weapon = data.weapons[i];
+                console.log(weapon.weaponTypeIndex);
+                game.addWeapon(weapon.weaponTypeIndex, weapon.position.x, weapon.position.y, weapon.id);
+            }
+
             console.log(data.walls);
             for(i = 0; i < data.walls.length; i++) {
                 game.addEntity(new Wall(data.walls[i].x, data.walls[i].y, data.walls[i].material));
