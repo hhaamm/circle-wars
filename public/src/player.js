@@ -95,6 +95,9 @@ var Player = function(x, y, direction, name, keyboard) {
         $(this.game.entities).each(function(i, entity) {
             if (entity.type == "weapon" && _self.hitTest(entity)) {
                 debug("Picked up weapon");
+                if (_self.game.isClient) {
+                    _self.game.trigger("weapon taken", {id: entity.id, playerId: _self.id});
+                }
                 _self.game.removeEntity(entity);
                 _self.addWeapon(entity);
             }

@@ -39,6 +39,7 @@
         $($('#canvas')[0]).attr("width", "800px");
         $($('#canvas')[0]).attr("height", "600px");
         var game = new Game(ctx, 800, 600, opts);
+        game.socket = socket;
 
         // game.init();
         var keyboard = {
@@ -80,7 +81,16 @@
             player1.id = data.id;
 
             for(var i = 0; i < data.players.length; i++) {
-                game.addPlayerIfNotPresent(data.players[i]);
+                var player = new Player(
+                    data.players[i].x,
+                    data.players[i].y,
+                    0,
+                    data.players[i].name,
+                    1
+                );
+                player.id = data.players[i].id;
+
+                game.addPlayerIfNotPresent(player);
             }
 
             console.log(data.walls);
@@ -102,6 +112,8 @@
             console.log("New player arrived");
             console.log(player);
             var newPlayer = new Player(player.x, player.y, player.name, null);
+
+            console.log(newPlayer);
             game.addEntity(newPlayer);
             game.players.push(newPlayer);
         });
@@ -117,6 +129,14 @@
         socket.on("new weapon", function(weapon) {
             console.log("New weapon arrived from the server: " + weapon.x + " " + weapon.y);
             game.addWeapon(weapon.weaponTypeIndex, weapon.position.x, weapon.position.y, weapon.id);
+        });
+        socket.on("weapon taken", function(data) {
+            console.log("Weapon taken: " + data.id);
+            var weapon = game.getEntityById(data.id);
+            game.removeEntity(weapon);
+            console.log(weapon);
+            var player = game.getPlayer(data.playerId);
+            player.addWeapon(weapon);
         });
     };
 

@@ -11,7 +11,7 @@ var
 
 var express = require('express');
 
-var socket, players, game;
+var socket, game;
 
 var debug = Util.debug;
 
@@ -44,9 +44,6 @@ function init() {
 }
 
 function initGameServer() {
-    // Server
-    players = [];
-
     // se debe crear un juego
     game = new Game(null, 800, 600, {multiplayer: "server"});
 
@@ -68,10 +65,11 @@ function onSocketConnection (client) {
     socket.set("transports", ["websocket"]);
     socket.set("log level", 2);
 
-    console.log("New player has connected: "+client.id);
+    console.log("New connection: " + client.id);
     client.on("disconnect", onClientDisconnect);
     client.on("new player", onNewPlayer);
     client.on("move player", onMovePlayer);
+    client.on("weapon taken", onWeaponTaken);
 
     var walls = [];
     var wallEntities = game.getEntities("wall");
@@ -82,12 +80,35 @@ function onSocketConnection (client) {
             y: wallEntities[i].y
         });
     }
+    var weapons = [];
+    var players = [];
+    for(i = 0; i < game.players.length; i++) {
+        players.push({
+            x: game.players.x,
+            y: game.players.y,
+            name: "New Player",
+            id: game.players.id
+        });
+    }
     this.emit("state", {
-        players: game.players,
+        players: players,
+        weapons: weapons,
         walls: walls,
         opts: game.opts,
         id: client.id
     });
+};
+
+function onWeaponTaken(data) {
+    util.log("Weapon taken: " + data.id);
+    console.log(data.playerId);
+    var entity = game.getEntityById(data.id);
+    if (entity) {
+        var player = game.getPlayer(data.playerId);
+        player.addWeapon(entity);
+        game.removeEntity(entity);
+        this.broadcast.emit("weapon taken", data);
+    }
 };
 
 function onClientDisconnect() {
@@ -99,8 +120,13 @@ function onClientDisconnect() {
 };
 
 function onNewPlayer(data) {
+    console.log("New player has connected: " + this.id);
     var newPlayer = new Player(data.x, data.y);
     newPlayer.id = this.id;
+
+    var player = new Player(data.x, data.y, 0, "New player", 1);
+    player.id = this.id;
+    game.addPlayerIfNotPresent(player);
 
     // Let all the players about the new player
     // this.broadcast.emit("new player", newPlayer);
@@ -108,13 +134,12 @@ function onNewPlayer(data) {
 
     // Let client know about all the players
     var i, existingPlayer;
-    for (i = 0; i < players.length; i++) {
-        existingPlayer = players[i];
-        // this.emit("new player", existingPlayer);
+    for (i = 0; i < game.players.length; i++) {
+        existingPlayer = game.players[i];
         this.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), name: "New Player"});
     };
 
-    players.push(newPlayer);
+    console.log("Number of players: " + game.players.length);
 };
 
 function onMovePlayer(data) {

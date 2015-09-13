@@ -26,6 +26,7 @@ var Game = function(ctx, width, height, opts) {
     this.isServer = opts.multiplayer == "server";
     this.isClient = opts.multiplayer == "client";
     this.isSinglePlayer = !opts.multiplayer;
+    this.isMultiplayer = !!opts.multiplayer;
 
     // Game finished callback
     // Use this from outside to be noticed that the game has finished
@@ -265,7 +266,8 @@ var Game = function(ctx, width, height, opts) {
                     weaponTypeIndex: weaponTypeIndex
                 });
 
-                debug("new weapon " + weapon.id);
+                debug("new weapon generated " + weapon.name + " " + weapon.id);
+                debug("Number of weapons: " + this.getEntityCount("weapon"));
             }
         }
 	};
@@ -330,8 +332,8 @@ var Game = function(ctx, width, height, opts) {
 	};
 
     this.addPlayerIfNotPresent = function(player) {
-        if (!this.isClient) {
-            throw "This method should only be used in client";
+        if (!this.isMultiplayer) {
+            throw "This method should only be used in Multiplayer";
         }
 
         var present = false;
@@ -363,6 +365,26 @@ var Game = function(ctx, width, height, opts) {
         console.log("removePlayer. Index: " + this.players.indexOf(player));
         this.players.splice(this.players.indexOf(player));
         this.entities.splice(this.entities.indexOf(player));
+    };
+
+    this.trigger = function(triggerName, data) {
+        switch(triggerName) {
+            case "weapon taken":
+            console.log("Weapon taken");
+            this.socket.emit("weapon taken", data);
+            break;
+        }
+    };
+
+    this.getEntityById = function(id) {
+        var entity;
+        for(var i = 0; i < this.entities.length; i++) {
+            if (this.entities[i].id == id) {
+                entity = this.entities[i];
+                break;
+            }
+        }
+        return entity;
     };
 };
 
