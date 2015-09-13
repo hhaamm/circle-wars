@@ -1,15 +1,46 @@
 var util = require("util"),
     io = require("socket.io"),
-    Player = require("./src/player.js"),
-    Game = require("./src/game.js"),
-    Util = require("./src/util.js"),
-    Wall = require("./src/wall.js").Wall;
+    Player = require("./public/src/player.js"),
+    Game = require("./public/src/game.js"),
+    Util = require("./public/src/util.js"),
+    Wall = require("./public/src/wall.js").Wall;
+
+var http = require('http'),
+    fs = require('fs');
+
+var express = require('express');
 
 var socket, players, game;
 
 var debug = Util.debug;
 
 function init() {
+    // Client
+    var app = express();
+
+    var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+    app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080);
+    app.set('ip', ip);
+
+    app.use(express.static(process.cwd() + '/public'));
+
+    // set the view engine to ejs
+    app.set('view engine', 'ejs');
+
+    app.get('/', function (req, res) {
+        res.render('index', { ip: ip});
+    });
+
+    var server = app.listen(8080, function () {
+
+        var host = server.address().address;
+        var port = server.address().port;
+
+        console.log('Example app listening at http://%s:%s', host, port);
+
+    });
+
+    // Server
     players = [];
 
     // se debe crear un juego
