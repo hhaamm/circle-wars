@@ -28,12 +28,12 @@ function init() {
     // set the view engine to ejs
     app.set('view engine', 'ejs');
 
-    var socketIOPort = 15001;
+    var socketIOPort = 8080;
     app.get('/', function (req, res) {
         res.render('index', { ip: ip, port: socketIOPort});
     });
 
-    http.createServer(app).listen(app.get('port') ,app.get('ip'), function () {
+    http.createServer(app).listen(80, app.get('ip'), function () {
         console.log("✔ Express server listening at %s:%d ", app.get('ip'),app.get('port'));
     });
 
