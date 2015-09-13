@@ -20,6 +20,7 @@ var Bullet = function(x, y, direction) {
     this.damage = 10;
     // Used to avoid asking to the server for new random numbers
     this.randomNumbers = null;
+    this.bulletTypeIndex = 0; // hardcoded
 
 	this.process = function() {
         this.x += Math.cos(this.direction) * this.speed;
@@ -168,6 +169,7 @@ var Missile = function(x, y, direction) {
     this.speed = 2;
     this.damage = 50;
     this.aceleration = 0.1;
+    this.bulletTypeIndex = 2; // hardcoded
 
     this.onEntityHit = function(entity) {
         if (entity.type == "weapon") {

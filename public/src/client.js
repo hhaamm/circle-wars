@@ -13,7 +13,7 @@ Client.prototype.addBullet = function(bullet) {
         direction: bullet.direction,
         randomNumbers: bullet.randomNumbers,
         outsideSuicideZone: 15, // bullet.outsideSuicideZone,
-        bulletTypeIndex: 0 // hardcoded
+        bulletTypeIndex: bullet.bulletTypeIndex
     });
 };
 
