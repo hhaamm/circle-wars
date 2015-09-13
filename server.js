@@ -1,11 +1,12 @@
 var util = require("util"),
+    http = require("http"),
     io = require("socket.io"),
     Player = require("./public/src/player.js"),
     Game = require("./public/src/game.js"),
     Util = require("./public/src/util.js"),
     Wall = require("./public/src/wall.js").Wall;
 
-var http = require('http'),
+var
     fs = require('fs');
 
 var express = require('express');
@@ -28,14 +29,12 @@ function init() {
     // set the view engine to ejs
     app.set('view engine', 'ejs');
 
-    var socketIOPort = 8080;
     app.get('/', function (req, res) {
-        res.render('index', { ip: ip, port: socketIOPort});
+        res.render('index', { ip: ip, port: port});
     });
 
-    http.createServer(app).listen(80, app.get('ip'), function () {
-        console.log("✔ Express server listening at %s:%d ", app.get('ip'),app.get('port'));
-    });
+    var http2 = http.Server(app);
+    var socket = io.listen(http2);
 
     // Server
     players = [];
@@ -43,11 +42,11 @@ function init() {
     // se debe crear un juego
     game = new Game(null, 800, 600, {multiplayer: "server"});
 
-    socket = io.listen(socketIOPort, ip);
-
     socket.on('connection', onSocketConnection);
 
     game.initServer();
+
+    http2.listen(port, ip);
 }
 
 init();
