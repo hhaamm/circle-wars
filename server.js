@@ -28,8 +28,9 @@ function init() {
     // set the view engine to ejs
     app.set('view engine', 'ejs');
 
+    var socketIOPort = 15001;
     app.get('/', function (req, res) {
-        res.render('index', { ip: ip});
+        res.render('index', { ip: ip, port: socketIOPort});
     });
 
     http.createServer(app).listen(app.get('port') ,app.get('ip'), function () {
@@ -42,7 +43,7 @@ function init() {
     // se debe crear un juego
     game = new Game(null, 800, 600, {multiplayer: "server"});
 
-    socket = io.listen(8000, ip);
+    socket = io.listen(socketIOPort, ip);
 
     socket.on('connection', onSocketConnection);
 
