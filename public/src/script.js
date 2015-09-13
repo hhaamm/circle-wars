@@ -75,6 +75,8 @@
             console.log(data.players);
             console.log("Your session id is " + data.id);
 
+            console.log("players: " + game.players.length);
+
             player1.id = data.id;
 
             for(var i = 0; i < data.players.length; i++) {
@@ -86,9 +88,16 @@
                     1
                 );
                 player.id = data.players[i].id;
+                console.log("ADDING PLAYER" + player);
 
-                game.addPlayerIfNotPresent(player);
+                if (player1.id != player.id) {
+                    console.log("adding player " + player.id);
+                    console.log(player.id);
+                    game.addPlayerIfNotPresent(player);
+                }
             }
+
+            console.log("players" + game.players.length);
 
             console.log("weapons");
             console.log(data.weapons);
@@ -116,7 +125,7 @@
         socket.on("new player", function(player) {
             console.log("New player arrived");
             console.log(player);
-            var newPlayer = new Player(player.x, player.y, player.name, null);
+            var newPlayer = new Player(player.x, player.y, player.direction, player.name);
 
             console.log(newPlayer);
             game.addEntity(newPlayer);

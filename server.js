@@ -105,7 +105,6 @@ function onNewPlayer(data) {
 
     var player = new Player(data.x, data.y, 0, "New player", 1);
     player.id = this.id;
-    game.addPlayerIfNotPresent(player);
 
     // Let all the players about the new player
     // this.broadcast.emit("new player", newPlayer);
@@ -115,8 +114,11 @@ function onNewPlayer(data) {
     var i, existingPlayer;
     for (i = 0; i < game.players.length; i++) {
         existingPlayer = game.players[i];
-        this.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), name: "New Player"});
+        this.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), name: "New Player", direction: existingPlayer.direction});
     };
+
+    // We add the player before
+    game.addPlayerIfNotPresent(player);
 
     console.log("Number of players: " + game.players.length);
 };

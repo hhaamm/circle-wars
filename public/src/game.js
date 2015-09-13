@@ -92,7 +92,6 @@ var Game = function(ctx, width, height, opts) {
 
             this.players.push(this.player1);
             this.players.push(this.player2);
-
         }
 
         this.__generateWalls();
@@ -233,8 +232,8 @@ var Game = function(ctx, width, height, opts) {
         if (!this.isServer) {
             for(i = 0; i < this.entities.length; i++) {
                 this.entities[i].draw(this.ctx);
-            }
 
+            }
 		    this.drawUI();
         }
 
