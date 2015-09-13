@@ -191,5 +191,6 @@ var bulletTypes = [Bullet, FragmentationBullet, Missile];
 if (typeof window == 'undefined') {
     module.exports.Missile = Missile;
     module.exports.Bullet = Bullet;
+    module.exports.FragmentationBullet = FragmentationBullet;
     module.exports.bulletTypes = bulletTypes;
 }

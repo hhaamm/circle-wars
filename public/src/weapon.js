@@ -60,7 +60,7 @@ var Shotgun = function(x, y) {
         v.originY = player.y;
 
         for(var i = -3; i < 3; i++) {
-		    player.game.addEntity(new Bullet(v.x(), v.y(), player.direction + i / 15));
+		    player.game.addEntity(new Bullet(v.x(), v.y(), player.direction + i / 15), true);
         }
         this.bullets -= 1;
 
@@ -88,7 +88,7 @@ var MachineGun = function(x, y) {
 
         for (var i = 0; i < 5; i++) {
             v.sum(i*10);
-            player.game.addEntity(new Bullet(v.x(), v.y(), player.direction));
+            player.game.addEntity(new Bullet(v.x(), v.y(), player.direction), true);
         }
 
         this.bullets -=5;
@@ -115,7 +115,7 @@ var FragmentationPistol = function(x, y) {
         v.originX = player.x;
         v.originY = player.y;
 
-        player.game.addEntity(new FragmentationBullet(v.x(), v.y(), player.direction, 2));
+        player.game.addEntity(new FragmentationBullet(v.x(), v.y(), player.direction, 2), true);
         this.bullets -= 1;
 
         this.lastShootTime = player.game.currentTime;
@@ -140,7 +140,7 @@ var ArmagedonPistol = function(x, y) {
         v.originX = player.x;
         v.originY = player.y;
 
-        player.game.addEntity(new FragmentationBullet(v.x(), v.y(), player.direction, 4));
+        player.game.addEntity(new FragmentationBullet(v.x(), v.y(), player.direction, 4), true);
         this.bullets -= 1;
 
         this.lastShootTime = player.game.currentTime;
@@ -166,7 +166,7 @@ var MissileLauncher = function(x, y) {
         v.originX = player.x;
         v.originY = player.y;
 
-        player.game.addEntity(new Missile(v.x(), v.y(), player.direction, 4));
+        player.game.addEntity(new Missile(v.x(), v.y(), player.direction, 4), true);
         this.bullets -= 1;
 
         this.lastShootTime = player.game.currentTime;
@@ -174,7 +174,8 @@ var MissileLauncher = function(x, y) {
 };
 MissileLauncher.prototype = new Weapon();
 
-var weaponTypes = [MachineGun, Shotgun, FragmentationPistol, ArmagedonPistol, MissileLauncher];
+var weaponTypes = [MachineGun, Shotgun, MissileLauncher]; // FragmentationPistol, ArmagedonPistol
+// TODO: add Frag and Armagedon for online games?
 
 if (typeof window == 'undefined') {
     module.exports.MissileLauncher = MissileLauncher;
