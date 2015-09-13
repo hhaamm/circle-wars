@@ -13,7 +13,7 @@ var Wall = function(x, y, material) {
 		ctx.fillStyle = this.material.fillStyle;
 		ctx.fillRect (this.x,this.y,this.width,this.height);
 	};
-	
+
 	// something hits the wall
 	this.hit = function(damage) {
 		this.life -= damage;
@@ -46,7 +46,7 @@ var WoodMaterial = {
 	explosionChance : 0.6,
 	pierceChance : 0.4,
     breakChance: 0.7,
-	fillStyle : "rgb(150,29,28)"	
+	fillStyle : "rgb(150,29,28)"
 };
 
 var GlassMaterial = {
@@ -69,3 +69,12 @@ var TreeMaterial = {
 
 // list of all posible wall materials available
 var wallMaterials = [StoneMaterial,WoodMaterial,GlassMaterial,TreeMaterial];
+
+if (typeof window == 'undefined') {
+    module.exports.Wall = Wall;
+    module.exports.WoodMaterial = WoodMaterial;
+    module.exports.GlassMaterial = GlassMaterial;
+    module.exports.TreeMaterial = TreeMaterial;
+    module.exports.StoneMaterial = StoneMaterial;
+    module.exports.wallMaterials = wallMaterials;
+}

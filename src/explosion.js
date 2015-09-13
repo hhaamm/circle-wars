@@ -1,5 +1,5 @@
 var Explosion = function(x, y, damage, maxRadius, increase) {
-    this.maxRadius = maxRadius ? maxRadius : 30;    
+    this.maxRadius = maxRadius ? maxRadius : 30;
     this.damage = damage;
     this.increase = increase ? increase : 1;
     this.radius = 0;
@@ -8,7 +8,7 @@ var Explosion = function(x, y, damage, maxRadius, increase) {
     this.touchedPlayers = [];
 
     debug("Exlosion!");
-    
+
     this.process = function() {
         this.radius += this.increase;
 
@@ -16,12 +16,12 @@ var Explosion = function(x, y, damage, maxRadius, increase) {
         var _self = this;
         $(this.game.players).each(function(i,player) {
             if (_self.hitTest(player) && _self.touchedPlayers.indexOf(player) == -1) {
-                console.log(player);                
+                console.log(player);
                 player.hit(_self.damage);
                 _self.touchedPlayers.push(player);
             }
         });
-        
+
         if (this.radius >= this.maxRadius) {
             debug("Explosion end!");
             this.game.removeEntity(this);
@@ -40,12 +40,16 @@ var Explosion = function(x, y, damage, maxRadius, increase) {
     // TODO: move to entity class
     this.hitTest = function(entity) {
         // TODO: hit test should check for both "entity type" property (circle or square)
-        
+
 		var distanceX = this.x - entity.x;
 		var distanceY = this.y - entity.y;
 		var distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-        
+
 		return distance < this.radius + entity.radius;
     };
 };
 Explosion.prototype = new Entity();
+
+if (typeof window == 'undefined') {
+    module.exports = Explosion;
+}

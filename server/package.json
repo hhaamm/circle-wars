@@ -1,0 +1,15 @@
+{
+  "name": "circle_wars_server",
+  "version": "1.0.0",
+  "description": "Circle Wars (server)",
+  "main": "server.js",
+  "dependencies": {
+    "socket.io": "^1.3.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hugo Alberto Massaroli",
+  "license": "GPL"
+}

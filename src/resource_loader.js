@@ -17,7 +17,7 @@ var ResourceLoader = function() {
     this.loadResources = function(callback)
     {
         debug("Loading");
-                
+
         var _self = this;
 
         for (var key in this.imagePaths) {

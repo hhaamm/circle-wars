@@ -4,6 +4,7 @@
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
     <title>Circle Wars</title>
     <script type="text/javascript" src="jquery-1.11.0.js"></script>
+    <script type="text/javascript" src="src/util.js"></script>
     <script type="text/javascript" src="src/vector.js"></script>
     <script type="text/javascript" src="src/resource_loader.js"></script>
     <script type="text/javascript" src="src/game.js"></script>
@@ -14,6 +15,7 @@
     <script type="text/javascript" src="src/explosion.js"></script>
     <script type="text/javascript" src="src/bullet.js"></script>
     <script type="text/javascript" src="src/script.js"></script>
+    <script src="http://localhost:8000/socket.io/socket.io.js"></script>
     <style>
      .clearfix {
        clear: both;
@@ -64,6 +66,7 @@
       <h1>Circle Wars</h1>
       <p>For so many years, the circles had peace. The war between the squares unified the circle fractions along the whole Earth. But once they could defeat the squares, after their unilateral surrender, the old little fights between different circle factions back to the light. The peace won't last...</p>
       <input type="button" id="newGameBtn" value="New Game"/>
+      <input type="button" id="newMultiplayerGameBtn" value="New Multiplayer Game"/>
       <input type="button" value="Ranking" disabled/>
     </div>
     <div id="stageCreateGame" class="stage gameMenu">

@@ -1,3 +1,8 @@
+if (typeof window == 'undefined') {
+    Missile = require("./bullet.js").Missile;
+    Vector = require("./vector.js");
+}
+
 var Weapon = function() {
     this.bullets = 5;
     this.type = "weapon";
@@ -6,7 +11,7 @@ var Weapon = function() {
     this.lastShootTime = 0;
     this.loadTime = 150;
     // Constant used for putting a new bullet in the game without killing the shooter.
-    this.outsideSuicideZone = 15; 
+    this.outsideSuicideZone = 15;
 
     this.draw = function(ctx) {
         ctx.drawImage(this.game.resources.images[this.image],this.x,this.y);
@@ -29,7 +34,7 @@ var Pistol = function() {
         var v = new Vector(player.direction, this.outsideSuicideZone);
         v.originX = player.x;
         v.originY = player.y;
-        
+
 		player.game.addEntity(new Bullet(v.x(), v.y(), player.direction));
 
         this.lastShootTime = player.game.currentTime;
@@ -53,7 +58,7 @@ var Shotgun = function(x, y) {
         var v = new Vector(player.direction, this.outsideSuicideZone);
         v.originX = player.x;
         v.originY = player.y;
-        
+
         for(var i = -3; i < 3; i++) {
 		    player.game.addEntity(new Bullet(v.x(), v.y(), player.direction + i / 15));
         }
@@ -83,7 +88,7 @@ var MachineGun = function(x, y) {
 
         for (var i = 0; i < 5; i++) {
             v.sum(i*10);
-            player.game.addEntity(new Bullet(v.x(), v.y(), player.direction));   
+            player.game.addEntity(new Bullet(v.x(), v.y(), player.direction));
         }
 
         this.bullets -=5;
@@ -109,7 +114,7 @@ var FragmentationPistol = function(x, y) {
         var v = new Vector(player.direction, this.outsideSuicideZone);
         v.originX = player.x;
         v.originY = player.y;
-        
+
         player.game.addEntity(new FragmentationBullet(v.x(), v.y(), player.direction, 2));
         this.bullets -= 1;
 
@@ -134,7 +139,7 @@ var ArmagedonPistol = function(x, y) {
         var v = new Vector(player.direction, this.outsideSuicideZone);
         v.originX = player.x;
         v.originY = player.y;
-        
+
         player.game.addEntity(new FragmentationBullet(v.x(), v.y(), player.direction, 4));
         this.bullets -= 1;
 
@@ -152,7 +157,7 @@ var MissileLauncher = function(x, y) {
     this.x = x;
     this.y = y;
     this.loadTime = 1000;
-    this.outsideSuicideZone = 30; 
+    this.outsideSuicideZone = 30;
 
     this.shoot = function(player) {
         if (!this.canShoot(player)) return;
@@ -160,7 +165,7 @@ var MissileLauncher = function(x, y) {
         var v = new Vector(player.direction, this.outsideSuicideZone);
         v.originX = player.x;
         v.originY = player.y;
-        
+
         player.game.addEntity(new Missile(v.x(), v.y(), player.direction, 4));
         this.bullets -= 1;
 
@@ -170,3 +175,9 @@ var MissileLauncher = function(x, y) {
 MissileLauncher.prototype = new Weapon();
 
 var weaponTypes = [MachineGun, Shotgun, FragmentationPistol, ArmagedonPistol, MissileLauncher];
+
+if (typeof window == 'undefined') {
+    module.exports.MissileLauncher = MissileLauncher;
+    module.exports.Pistol = Pistol;
+    module.exports.weaponTypes = weaponTypes;
+}

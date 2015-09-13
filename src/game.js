@@ -1,16 +1,30 @@
+if (typeof window == 'undefined') {
+    var WallModule = require("./wall.js");
+    Wall = WallModule.Wall;
+    wallMaterials = WallModule.wallMaterials;
+    StoneMaterial = WallModule.StoneMaterial;
+    setIntervalWithContext = require("./util.js").setIntervalWithContext;
+    var WeaponModule = require("./weapon.js");
+    weaponTypes = WeaponModule.weaponTypes;
+}
+
 var Game = function(ctx, width, height, opts) {
 	this.ctx = ctx;
 	this.WIDTH = width;
-	this.HEIGHT = height;	
+	this.HEIGHT = height;
 
     this.players = [];
 	this.entities = []; // List of entities that will be drawn and process
 	// An entity is an object that implements draw(), process() and setGame methods
 	// and implements type (player, bullet) and radius properties
-	
+
 	this.removeEntities = [];
 
-    this.resources = new ResourceLoader();
+    // It can be null (single player), "client" or "server"
+    this.multiplayer = opts.multiplayer;
+    this.isServer = opts.multiplayer == "server";
+    this.isClient = opts.multiplayer == "client";
+    this.isSinglePlayer = !opts.multiplayer;
 
     // Game finished callback
     // Use this from outside to be noticed that the game has finished
@@ -24,57 +38,79 @@ var Game = function(ctx, width, height, opts) {
         minWalls: 0
     };
     this.opts = opts || {};
-    this.opts = $.extend({}, defaults, this.opts);
-	
+    this.opts = extend({}, defaults, this.opts);
+
 	/* PUBLIC FUNCTIONS */
 	this.init = function() {
-        var keyboard1 =         {
-            left: 65, // A,
-            right: 68, // D
-            forward: 87, // W 
-            backward: 83, // S,
-            shoot: 32 // ENTER
-        };
+        var _self = this;
+        if (!this.multiplayer) {
+            var keyboard1 =         {
+                left: 65, // A,
+                right: 68, // D
+                forward: 87, // W
+                backward: 83, // S,
+                shoot: 32 // ENTER
+            };
 
-        var keyboard2 = {
-            left: 37, // left
-            right: 39, // right
-            forward: 38, // forward
-            backward: 40, // down
-            shoot: 13 // ENTER
-        };
-		this.player1 = new Player(100, 100, 1, "Player 1", keyboard1);
-		this.player2 = new Player(500, 400, 2, "Player 2", keyboard2);
+            var keyboard2 = {
+                left: 37, // left
+                right: 39, // right
+                forward: 38, // forward
+                backward: 40, // down
+                shoot: 13 // ENTER
+            };
+		    this.player1 = new Player(100, 100, 1, "Player 1", keyboard1);
+		    this.player2 = new Player(500, 400, 2, "Player 2", keyboard2);
 
-        // only for debug purpuses
-        // this.player1.weapon = new MissileLauncher(0,0);
-        // this.player2.weapon = new MissileLauncher(0,0);
-		
-		var _self = this;
-		$(document).keydown(function(evt) {
-			_self.player1.onKeyDown(evt);
-			return false;
-		});
-		$(document).keyup(function(evt) {
-			_self.player1.onKeyUp(evt);
-			return false;
-		});
-		
-		$(document).keydown(function(evt) {
-			_self.player2.onKeyDown(evt);
-			return false;
-		});
-		$(document).keyup(function(evt) {
-			_self.player2.onKeyUp(evt);
-			return false;
-		});
-		
-		this.addEntity(this.player1);
-		this.addEntity(this.player2);
+            // only for debug purpuses
+            // this.player1.weapon = new MissileLauncher(0,0);
+            // this.player2.weapon = new MissileLauncher(0,0);
 
-        this.players.push(this.player1);
-        this.players.push(this.player2);
-		
+		    $(document).keydown(function(evt) {
+			    _self.player1.onKeyDown(evt);
+			    return false;
+		    });
+		    $(document).keyup(function(evt) {
+			    _self.player1.onKeyUp(evt);
+			    return false;
+		    });
+
+		    $(document).keydown(function(evt) {
+			    _self.player2.onKeyDown(evt);
+			    return false;
+		    });
+		    $(document).keyup(function(evt) {
+			    _self.player2.onKeyUp(evt);
+			    return false;
+		    });
+
+		    this.addEntity(this.player1);
+		    this.addEntity(this.player2);
+
+            this.players.push(this.player1);
+            this.players.push(this.player2);
+
+        }
+
+        this.__generateWalls();
+
+        this.resources = new ResourceLoader();
+        this.resources.loadResources(function() {
+		    _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
+        });
+	};
+
+    this.initServer = function() {
+        var _self = this;
+
+        this.players = [];
+
+        this.__generateWalls();
+
+        _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
+    };
+
+    this.__generateWalls = function() {
 		// Add random walls (not in the player's square!)
 		// TODO: move this code to a GameConstructorObject and have many game constructors (or map constructors)
         // using composition
@@ -83,17 +119,19 @@ var Game = function(ctx, width, height, opts) {
 		var sampleWall = new Wall(0,0, {});
 		debug("Walls: "+walls);
 		var x, y;
-		for (var i = 0; i < walls; i++) {		
+		for (var i = 0; i < walls; i++) {
 			x = Math.floor(Math.random() * this.WIDTH  / sampleWall.width) * sampleWall.width;
 			y = Math.floor(Math.random() * this.HEIGHT  / sampleWall.height) * sampleWall.height;
 			// TODO: check we are not repeating two walls in the same place! Have a matrix for this.. ? It's an easier approach.
 			// TODO: we need a method to get "the square properties for a circle entity"
-			if ((x != this.player1.x - this.player1.radius / 2 || y != this.player1.y - this.player1.radius / 2)
-				&& 
-				(x != this.player2.x - this.player2.radius / 2 | y != this.player2.y - this.player2.radius / 2)) {
+			if (this.multiplayer || // No discrimination when in multiplayer
+                (
+                    (x != this.player1.x - this.player1.radius / 2 || y != this.player1.y - this.player1.radius / 2)
+				        &&
+				        (x != this.player2.x - this.player2.radius / 2 | y != this.player2.y - this.player2.radius / 2))) {
 				var material = wallMaterials[Math.floor(Math.random()*wallMaterials.length)];
 				this.addEntity(new Wall(x, y, material));
-			}			
+			}
 		}
 
         // TODO: si el armagedon le pega directamente a un usuario entonces +500 a la vida
@@ -106,41 +144,58 @@ var Game = function(ctx, width, height, opts) {
         for( i = 0; i < this.HEIGHT/20; i++) {
             this.addEntity(new Wall(0, i*20, StoneMaterial));
             this.addEntity(new Wall(this.WIDTH - 20, i*20, StoneMaterial));
-        }	
+        }
 
         // house building
         /*
-        for (var i= 0; i < 8; i++) {
-            this.addEntity(new Wall(100+i*20, 140, material));
-            this.addEntity(new Wall(100+i*20, 300, material));
-        }
-        for (var j = 0;j <8; j++) {
-            this.addEntity(new Wall(100, 140+j*20, material));
-            if (j % 2 == 0) {
-                this.addEntity(new Wall(240, 140+j*20, material));
-            } else {
-                this.addEntity(new Wall(240, 140+j*20, GlassMaterial));
-            }
-        }*/
+         for (var i= 0; i < 8; i++) {
+         this.addEntity(new Wall(100+i*20, 140, material));
+         this.addEntity(new Wall(100+i*20, 300, material));
+         }
+         for (var j = 0;j <8; j++) {
+         this.addEntity(new Wall(100, 140+j*20, material));
+         if (j % 2 == 0) {
+         this.addEntity(new Wall(240, 140+j*20, material));
+         } else {
+         this.addEntity(new Wall(240, 140+j*20, GlassMaterial));
+         }
+         }*/
+    };
 
+    this.initClient = function() {
+        var _self = this;
+
+        // add ourselves as a player
+
+        // get players
+
+        // get entities
+
+        // get bullets, etc.
+
+        // but we should do all of that in the interval?
+
+        this.resources = new ResourceLoader();
         this.resources.loadResources(function() {
 		    _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
         });
-	};
-	
+    };
+
 	this.addEntity = function(entity) {
 		entity.setGame(this);
 		this.entities.push(entity);
 	};
-	
+
 	// Remove entity after processing all other entities
 	this.removeEntity = function(entity) {
 		this.removeEntities.push(entity);
 	};
-	
+
 	/* PRIVATE FUNCTIONS */
-	this.run = function() {	
-		this.clear();
+	this.run = function() {
+        if (!this.isServer) {
+		    this.clear();
+        }
 		var _self = this;
 
         // Entities can use this time
@@ -151,37 +206,43 @@ var Game = function(ctx, width, height, opts) {
         for(i = 0; i < this.entities.length; i++) {
             this.entities[i].process();
         }
-        for(i = 0; i < this.entities.length; i++) {
-            this.entities[i].draw(this.ctx);
+
+        if (!this.isServer) {
+            for(i = 0; i < this.entities.length; i++) {
+                this.entities[i].draw(this.ctx);
+            }
+
+		    this.drawUI();
         }
-		
-		this.drawUI();
-		
+
 		// remove entities
-		$(this.removeEntities).each(function(i, entity) {
+        for(var j = 0; j < this.removeEntities.length; j++) {
+            var entity = this.removeEntities[j];
 			var index = _self.entities.indexOf(entity);
 			if (index > -1) {
 				_self.entities.splice(index, 1);
 			}
-		});
-		
+        }
+
 		this.removeEntities = [];
-		
-		if (this.player1.life <= 0 || this.player2.life <= 0) {
+
+        // Un juego multiplayer nunca termina
+		if (!this.multiplayer &&
+            (this.player1.life <= 0 || this.player2.life <= 0)) {
 			// Game over
 			clearInterval(this.runInterval);
-			
+
 			this.ctx.fillStyle = "white";
 			this.ctx.font = "bold 30px Arial";
 			this.ctx.fillText("Game Over", 100, 200);
-			
+
 			this.ctx.font = "bold 20px Arial";
 			if (this.player1.life > 0) {
 				this.ctx.fillText("Player 1 Wins", 100, 300);
 			} else {
-				this.ctx.fillText("Player 2 Wins", 100, 300);	
+				this.ctx.fillText("Player 2 Wins", 100, 300);
 			}
-			
+
             this.onGameOver();
 		}
 
@@ -196,12 +257,15 @@ var Game = function(ctx, width, height, opts) {
             this.addEntity(weapon);
         }
 	};
-	
+
 	this.drawUI = function() {
-		this.drawPlayerStats(20, 30, this.player1);
-		this.drawPlayerStats(this.WIDTH - 90, 30, this.player2);
+        if (!this.multiplayer) {
+            // TODO: draw player stats ONLY for player 1?
+		    this.drawPlayerStats(20, 30, this.player1);
+		    this.drawPlayerStats(this.WIDTH - 90, 30, this.player2);
+        }
 	};
-	
+
 	this.drawPlayerStats = function(x, y, player) {
 		this.ctx.fillStyle = "white";
 		this.ctx.font = "bold 16px Arial";
@@ -209,10 +273,58 @@ var Game = function(ctx, width, height, opts) {
 		this.ctx.fillText(player.getWeapon().name + " " + (player.getWeapon().bullets > 0 ? player.getWeapon().bullets : ""), x, y + 20);
 		this.ctx.fillText(player.life, x, y + 40);
 	};
-	
+
 	this.clear = function() {
 		// ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT);
 		ctx.fillStyle="brown";
 		ctx.fillRect(0,0,this.WIDTH,this.HEIGHT);
 	};
+
+    this.addPlayerIfNotPresent = function(player) {
+        if (!this.isClient) {
+            throw "This method should only be used in client";
+        }
+
+        var present = false;
+        for (var i = 0; i < this.players.length; i++) {
+            if (this.players[i].id == player.id) {
+                present = true;
+                break;
+            }
+        }
+
+        if (!present) {
+            this.players.push(player);
+            this.addEntity(player);
+        }
+    };
+
+    this.getPlayer = function(playerId) {
+        for (var i = 0; i < this.players.length; i++) {
+            if (this.players[i].id == playerId) {
+                return this.players[i];
+            }
+        }
+        return null;
+    };
+
+    this.removePlayer = function(playerId) {
+        var player = this.getPlayer(playerId);
+
+        console.log("removePlayer. Index: " + this.players.indexOf(player));
+        this.players.splice(this.players.indexOf(player));
+        this.entities.splice(this.entities.indexOf(player));
+    };
 };
+
+function extend(){
+    for(var i=1; i<arguments.length; i++)
+        for(var key in arguments[i])
+            if(arguments[i].hasOwnProperty(key))
+                arguments[0][key] = arguments[i][key];
+    return arguments[0];
+}
+
+if (typeof window == 'undefined') {
+    module.exports = Game;
+}

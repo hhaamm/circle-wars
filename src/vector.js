@@ -13,7 +13,12 @@ var Vector = function(direction, module) {
         return Math.round(Math.cos(this.direction) * this.module) + this.originX;
     };
 
-    this.y = function() {        
+    this.y = function() {
         return Math.round(- Math.sin(this.direction) * this.module) + this.originY;
     };
 };
+
+
+if (typeof window == 'undefined') {
+    module.exports = Vector;
+}
