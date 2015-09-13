@@ -95,7 +95,7 @@ function onClientDisconnect() {
 
     game.removePlayer(this.id);
 
-    this.broadcast.emit("remove player " + this.id, {id: this.id});
+    this.broadcast.emit("remove player", {playerId: this.id});
 };
 
 function onNewPlayer(data) {

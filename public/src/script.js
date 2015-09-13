@@ -160,9 +160,9 @@
             player.x = data.position.x;
             player.y = data.position.y;
         });
-        socket.on("remove player", function(playerId) {
-            console.log("removing player " + playerId);
-            game.removePlayer(playerId);
+        socket.on("remove player", function(data) {
+            console.log("removing player " + data.playerId);
+            game.removePlayer(data.playerId);
         });
         socket.on("new weapon", function(weapon) {
             console.log("New weapon arrived from the server: " + weapon.x + " " + weapon.y);
