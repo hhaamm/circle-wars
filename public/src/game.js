@@ -248,7 +248,8 @@ var Game = function(ctx, width, height, opts) {
 
         // Random weapon generation
         // TODO: make this exponential with the number of weapons available in the map!
-        if (Math.random() > this.opts.weaponGeneration) {
+        console.log(this.getEntityCount("weapon"));
+        if (Math.random() > this.opts.weaponGeneration && this.getEntityCount("weapon") < 10) {
             debug("Added weapon");
             var weaponConstructor = weaponTypes[Math.floor(Math.random()*weaponTypes.length)];
             var weapon = new weaponConstructor(Math.floor(Math.random()*this.WIDTH), Math.floor(Math.random()*this.HEIGHT));
@@ -257,6 +258,15 @@ var Game = function(ctx, width, height, opts) {
             this.addEntity(weapon);
         }
 	};
+
+    this.getEntityCount = function(type) {
+        var count = 0;
+        for(var i = 0; i < this.entities.length; i++) {
+            if (this.entities[i].type == type)
+                count++;
+        }
+        return count;
+    };
 
 	this.drawUI = function() {
         if (!this.multiplayer) {
