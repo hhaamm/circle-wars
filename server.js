@@ -52,6 +52,9 @@ function initGameServer() {
 
     socket.on('connection', onSocketConnection);
 
+    //TODO: code smell
+    game.socket = socket;
+
     game.initServer();
 }
 

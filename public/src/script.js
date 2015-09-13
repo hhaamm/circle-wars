@@ -19,6 +19,8 @@
     };
 
     var startMultiplayerGame = function() {
+        //TODO: move all this code to CLIENT.js ?
+
         // serverUrl is defined in index.ejs
         var socket = io.connect(serverUrl, {transports: ["websocket"]});
 
@@ -86,7 +88,9 @@
             console.log("Connected");
 
         });
-        socket.on("disconnect", log);
+        socket.on("disconnect", function(data) {
+            console.log(data);
+        });
         socket.on("new player", function(player) {
             console.log("New player arrived");
             console.log(player);
@@ -103,10 +107,10 @@
             console.log("removing player " + playerId);
             game.removePlayer(playerId);
         });
-
-        function log(data) {
-            console.log(data);
-        }
+        socket.on("new weapon", function(weapon) {
+            console.log("New weapon arrived from the server: " + weapon.x + " " + weapon.y);
+            game.addWeapon(weapon.weaponTypeIndex, weapon.position.x, weapon.position.y, weapon.id);
+        });
     };
 
     var setButtonCallbacks = function() {

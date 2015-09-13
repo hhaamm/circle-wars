@@ -6,6 +6,7 @@ if (typeof window == 'undefined') {
     setIntervalWithContext = require("./util.js").setIntervalWithContext;
     var WeaponModule = require("./weapon.js");
     weaponTypes = WeaponModule.weaponTypes;
+    uuid = require("node-uuid");
 }
 
 var Game = function(ctx, width, height, opts) {
@@ -248,15 +249,44 @@ var Game = function(ctx, width, height, opts) {
 
         // Random weapon generation
         // TODO: make this exponential with the number of weapons available in the map!
-        if (Math.random() > this.opts.weaponGeneration && this.getEntityCount("weapon") < 10) {
+        if (Math.random() > this.opts.weaponGeneration && this.getEntityCount("weapon") < 10 && !this.isClient) {
             debug("Added weapon");
-            var weaponConstructor = weaponTypes[Math.floor(Math.random()*weaponTypes.length)];
-            var weapon = new weaponConstructor(Math.floor(Math.random()*this.WIDTH), Math.floor(Math.random()*this.HEIGHT));
-            weapon.x -= weapon.width / 2;
-            weapon.y -= weapon.height / 2;
-            this.addEntity(weapon);
+            var weaponTypeIndex = Math.floor(Math.random()*weaponTypes.length);
+
+            var weapon = this.addWeapon(weaponTypeIndex, null, null);
+
+            if (this.isServer) {
+                this.socket.emit("new weapon", {
+                    position: {
+                        x: weapon.x,
+                        y: weapon.y
+                    },
+                    id: weapon.id,
+                    weaponTypeIndex: weaponTypeIndex
+                });
+
+                debug("new weapon " + weapon.id);
+            }
         }
 	};
+
+    this.addWeapon = function(weaponTypeIndex, x, y, id) {
+        var weaponConstructor = weaponTypes[weaponTypeIndex];
+        var weapon;
+        if (this.isServer || this.isSinglePlayer) {
+            weapon = new weaponConstructor(Math.floor(Math.random()*this.WIDTH), Math.floor(Math.random()*this.HEIGHT));
+            weapon.x -= weapon.width / 2;
+            weapon.y -= weapon.height / 2;
+            weapon.id = uuid.v1();
+        } else {
+            weapon = new weaponConstructor(x, y);
+            weapon.id = id;
+        }
+
+        this.addEntity(weapon);
+
+        return weapon;
+    };
 
     this.getEntityCount = function(type) {
         var count = 0;
