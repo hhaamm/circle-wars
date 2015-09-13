@@ -19,7 +19,8 @@ function init() {
     var app = express();
 
     var ip = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
-    app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080);
+    var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 8080;
+    app.set('port', port);
     app.set('ip', ip);
 
     app.use(express.static(process.cwd() + '/public'));
@@ -41,7 +42,7 @@ function init() {
     // se debe crear un juego
     game = new Game(null, 800, 600, {multiplayer: "server"});
 
-    socket = io.listen(8000);
+    socket = io.listen(8000, ip);
 
     socket.on('connection', onSocketConnection);
 
