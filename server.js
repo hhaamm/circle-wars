@@ -1,9 +1,9 @@
 var util = require("util"),
     io = require("socket.io"),
-    Player = require("../src/player.js"),
-    Game = require("../src/game.js"),
-    Util = require("../src/util.js"),
-    Wall = require("../src/wall.js").Wall;
+    Player = require("./src/player.js"),
+    Game = require("./src/game.js"),
+    Util = require("./src/util.js"),
+    Wall = require("./src/wall.js").Wall;
 
 var socket, players, game;
 
