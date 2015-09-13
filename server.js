@@ -73,9 +73,18 @@ function onSocketConnection (client) {
     client.on("new player", onNewPlayer);
     client.on("move player", onMovePlayer);
 
+    var walls = [];
+    var wallEntities = game.getEntities("wall");
+    for(var i = 0; i < wallEntities.length; i++) {
+        walls.push({
+            material: wallEntities[i].material,
+            x: wallEntities[i].x,
+            y: wallEntities[i].y
+        });
+    }
     this.emit("state", {
         players: game.players,
-        // walls: game.entities,
+        walls: walls,
         opts: game.opts,
         id: client.id
     });

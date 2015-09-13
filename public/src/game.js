@@ -297,6 +297,16 @@ var Game = function(ctx, width, height, opts) {
         return count;
     };
 
+    this.getEntities = function(type) {
+        var entities = [];
+        for(var i = 0; i < this.entities.length; i++) {
+            if (this.entities[i].type == type)
+                entities.push(this.entities[i]);
+        }
+        return entities;
+    };
+
+
 	this.drawUI = function() {
         if (!this.multiplayer) {
             // TODO: draw player stats ONLY for player 1?

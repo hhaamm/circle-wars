@@ -36,7 +36,9 @@
         opts["multiplayer"] = "client";
 
         var ctx = $('#canvas')[0].getContext("2d");
-        var game = new Game(ctx, $('#canvas').attr("width"), $('#canvas').attr("height"), opts);
+        $($('#canvas')[0]).attr("width", "800px");
+        $($('#canvas')[0]).attr("height", "600px");
+        var game = new Game(ctx, 800, 600, opts);
 
         // game.init();
         var keyboard = {
@@ -79,6 +81,11 @@
 
             for(var i = 0; i < data.players.length; i++) {
                 game.addPlayerIfNotPresent(data.players[i]);
+            }
+
+            console.log(data.walls);
+            for(i = 0; i < data.walls.length; i++) {
+                game.addEntity(new Wall(data.walls[i].x, data.walls[i].y, data.walls[i].material));
             }
 
             console.log("Send new player");
