@@ -61,8 +61,6 @@
 		});
 
         //TODO: move all this code to client.js
-        game.addEntity(player1);
-        game.players.push(player1);
 
         game.initClient(player1);
 

@@ -165,8 +165,12 @@ var Game = function(ctx, width, height, opts) {
          }*/
     };
 
-    this.initClient = function() {
+    this.initClient = function(player) {
         var _self = this;
+
+        this.player1 = player;
+        this.addEntity(player);
+        this.players.push(player);
 
         // add ourselves as a player
 
@@ -327,9 +331,12 @@ var Game = function(ctx, width, height, opts) {
 
 
 	this.drawUI = function() {
-        if (!this.multiplayer) {
+        if (!this.isServer && this.player1) {
             // TODO: draw player stats ONLY for player 1?
 		    this.drawPlayerStats(20, 30, this.player1);
+        }
+
+        if (!this.multiplayer) {
 		    this.drawPlayerStats(this.WIDTH - 90, 30, this.player2);
         }
 	};
