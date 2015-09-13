@@ -34,7 +34,7 @@ function init() {
     });
 
     var http2 = http.Server(app);
-    var socket = io.listen(http2);
+    socket = io.listen(http2);
 
     http2.listen(port, ip, function() {
         console.log("✔ Express server listening at %s:%d ", app.get('ip'),app.get('port'));
