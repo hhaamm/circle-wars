@@ -70,6 +70,10 @@
         };
 
         socket.on("state", function(data) {
+            if (!data.id) {
+                throw "No id provided from server";
+            }
+
             console.log("State");
             console.log(data.opts);
             console.log(data.players);
@@ -78,6 +82,8 @@
             console.log("players: " + game.players.length);
 
             player1.id = data.id;
+
+
 
             for(var i = 0; i < data.players.length; i++) {
                 var player = new Player(
@@ -88,7 +94,10 @@
                     1
                 );
                 player.id = data.players[i].id;
-                console.log("ADDING PLAYER" + player);
+
+                if (!data.players[i].id) {
+                    throw "Error: player without ID";
+                }
 
                 if (player1.id != player.id) {
                     console.log("adding player " + player.id);
@@ -112,7 +121,7 @@
                 game.addEntity(new Wall(data.walls[i].x, data.walls[i].y, data.walls[i].material));
             }
 
-            console.log("Send new player");
+            console.log("Send new player: " + player1.id);
             socket.emit("new player", {x: player1.getX(), y: player1.getY(), name: "Player"});
         });
         socket.on("connect", function() {
@@ -126,6 +135,17 @@
             console.log("New player arrived");
             console.log(player);
             var newPlayer = new Player(player.x, player.y, player.direction, player.name);
+            newPlayer.id = player.id;
+
+            if (!player.id) {
+                console.log("WARNING: Receiving player without ID from server");
+                return;
+            }
+
+            if (player.id == game.player1.id ) {
+                console.log("WARNING: Receiving player with same id as player1 from server");
+                return;
+            }
 
             console.log(newPlayer);
             game.addEntity(newPlayer);
@@ -133,6 +153,10 @@
         });
         socket.on("move player", function(data) {
             var player = game.getPlayer(data.playerId);
+            if (!player) {
+                console.log("WARNING: no player with ID " + data.playerId);
+                return;
+            }
             player.x = data.position.x;
             player.y = data.position.y;
         });

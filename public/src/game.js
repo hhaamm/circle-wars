@@ -375,7 +375,9 @@ var Game = function(ctx, width, height, opts) {
         if (!present) {
             this.players.push(player);
             this.addEntity(player);
+            return true;
         }
+        return false;
     };
 
     this.getPlayer = function(playerId) {

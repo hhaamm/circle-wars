@@ -75,7 +75,7 @@ function onSocketConnection (client) {
     client.on("weapon taken", onWeaponTaken);
     client.on("new bullet", onNewBullet);
 
-    __emitState.call(this, client);
+    __emitState(client);
 };
 
 function onWeaponTaken(data) {
@@ -99,33 +99,37 @@ function onClientDisconnect() {
 };
 
 function onNewPlayer(data) {
-    console.log("New player has connected: " + this.id);
-    var newPlayer = new Player(data.x, data.y);
-    newPlayer.id = this.id;
-
-    var player = new Player(data.x, data.y, 0, "New player", 1);
+    var player = new Player(100, 100, 0, "New player", 1);
     player.id = this.id;
+    if (game.addPlayerIfNotPresent(player)) {
+        console.log("Added player with id " + player.id);
+        console.log("Number of players: " + game.players.length);
 
-    // Let all the players about the new player
-    // this.broadcast.emit("new player", newPlayer);
-    this.broadcast.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), name: "New Player"});
-
-    // Let client know about all the players
-    var i, existingPlayer;
-    for (i = 0; i < game.players.length; i++) {
-        existingPlayer = game.players[i];
-        this.emit("new player", {id: newPlayer.id, x: newPlayer.getX(), y: newPlayer.getY(), name: "New Player", direction: existingPlayer.direction});
-    };
-
-    // We add the player before
-    game.addPlayerIfNotPresent(player);
-
-    console.log("Number of players: " + game.players.length);
+        this.broadcast.emit("new player", {id: player.id, direction: player.direction, x: player.getX(), y: player.getY(), name: "New Player"});
+    } else {
+        util.error("ERROR: Trying to add an already existent player with id " + player.id);
+    }
 };
 
 function onMovePlayer(data) {
     util.log("Player " + data.id + " moved");
-    this.broadcast.emit("move player", {id: data.id, position: {x: data.position.x, y: data.position.y}});
+    if (!data.id) {
+        console.log("WARN: onMovePlayer() trying to move without ID");
+        console.log(data);
+        return;
+    }
+
+    var player = game.getPlayer(data.id);
+
+    if (!player) {
+        console.log("WARN: onMovePlayer() no player with id " + data.id);
+        return;
+    }
+
+    player.x = data.position.x;
+    player.y = data.position.y;
+
+    this.broadcast.emit("move player", {playerId: data.id, position: {x: data.position.x, y: data.position.y}});
 };
 
 function onNewBullet(bulletData) {
@@ -166,14 +170,20 @@ function __emitState(client) {
 
     var players = [];
     for(i = 0; i < game.players.length; i++) {
+        if (!game.players[i].id) {
+            console.log(game.players[i]);
+            throw "Player without ID!";
+        }
         players.push({
-            x: game.players.x,
-            y: game.players.y,
+            x: game.players[i].x,
+            y: game.players[i].y,
             name: "New Player",
-            id: game.players.id
+            id: game.players[i].id,
+            direction: game.players[i].direction
         });
     }
-    this.emit("state", {
+
+    client.emit("state", {
         players: players,
         weapons: weapons,
         walls: walls,
