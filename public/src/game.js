@@ -251,8 +251,7 @@ var Game = function(ctx, width, height, opts) {
         // Un juego multiplayer nunca termina
 		if (!this.multiplayer &&
             (this.player1.life <= 0 || this.player2.life <= 0)) {
-			// Game over
-			clearInterval(this.runInterval);
+            this.stop();
 
 			this.ctx.fillStyle = "white";
 			this.ctx.font = "bold 30px Arial";
@@ -295,6 +294,13 @@ var Game = function(ctx, width, height, opts) {
             }
         }
 	};
+
+    /*
+     * It stops the game loop.
+     */
+    this.stop = function() {
+        clearInterval(this.runInterval);
+    };
 
     this.addWeapon = function(weaponTypeIndex, x, y, id) {
         var weaponConstructor = weaponTypes[weaponTypeIndex];

@@ -65,6 +65,7 @@
         game.initClient(player1);
 
         game.onGameOver = function() {
+            game.stop();
             //TODO: let the server know we died
             window.location.href = '/over';
         };
