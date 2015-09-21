@@ -105,11 +105,15 @@ var Game = function(ctx, width, height, opts) {
     this.initServer = function() {
         var _self = this;
 
+        this.lastFrameTime = Date.now();
+        this.framesPerSecond = 60;
+        this.milisecsPerFrame = 1000 / 60;
+
         this.players = [];
 
         this.__generateWalls();
 
-        _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
+        _self.runInterval = setIntervalWithContext(_self.runNextFrames, 10, _self);
     };
 
     this.__generateWalls = function() {
@@ -185,9 +189,13 @@ var Game = function(ctx, width, height, opts) {
 
         this.client = new Client(this, this.socket);
 
+        this.lastFrameTime = Date.now();
+        this.framesPerSecond = 60;
+        this.milisecsPerFrame = 1000 / 60;
+
         this.resources = new ResourceLoader();
         this.resources.loadResources(function() {
-		    _self.runInterval = setIntervalWithContext(_self.run, 10, _self);
+		    _self.runInterval = setIntervalWithContext(_self.runNextFrames, 10, _self);
         });
     };
 
@@ -198,8 +206,8 @@ var Game = function(ctx, width, height, opts) {
         if (this.isClient && sendToServer) {
             switch (entity.type) {
                 case "bullet":
-                console.log(entity);
-                console.log("Sending bullet to server");
+                debug(entity);
+                debug("Sending bullet to server");
                 entity.id = uuid.v1();
                 entity.generateRandomNumbers();
                 this.client.addBullet(entity);
@@ -214,10 +222,40 @@ var Game = function(ctx, width, height, opts) {
 	};
 
 	/* PRIVATE FUNCTIONS */
-	this.run = function() {
-        if (!this.isServer) {
-		    this.clear();
+    /**
+     * It runs all neccesary frames.
+     */
+    this.runNextFrames = function() {
+        var time = Date.now();
+
+        var times = (time - this.lastFrameTime) / this.milisecsPerFrame;
+
+        // Sólo sumamos los frames que efectivamente se computaran, PERO dibujamos teniendo en cuenta
+        // el tiempo real ?
+        this.lastFrameTime = this.lastFrameTime + this.milisecsPerFrame * Math.floor(times);
+
+        for (var i = 0; i < times; i++) {
+            this.process();
         }
+
+        // debug(times);
+
+        if (!this.isServer) {
+            this.draw();
+        }
+    };
+
+    this.draw = function() {
+		this.clear();
+
+        for(var i = 0; i < this.entities.length; i++) {
+            this.entities[i].draw(this.ctx);
+
+        }
+		this.drawUI();
+    };
+
+	this.process = function() {
 		var _self = this;
 
         // Entities can use this time
@@ -229,24 +267,18 @@ var Game = function(ctx, width, height, opts) {
             this.entities[i].process();
         }
 
-        if (!this.isServer) {
-            for(i = 0; i < this.entities.length; i++) {
-                this.entities[i].draw(this.ctx);
-
-            }
-		    this.drawUI();
-        }
-
 		// remove entities
-        for(var j = 0; j < this.removeEntities.length; j++) {
-            var entity = this.removeEntities[j];
-			var index = _self.entities.indexOf(entity);
-			if (index > -1) {
-				_self.entities.splice(index, 1);
-			}
-        }
+        if (this.removeEntities.length) {
+            for(var j = 0; j < this.removeEntities.length; j++) {
+                var entity = this.removeEntities[j];
+			    var index = _self.entities.indexOf(entity);
+			    if (index > -1) {
+				    _self.entities.splice(index, 1);
+			    }
+            }
 
-		this.removeEntities = [];
+		    this.removeEntities = [];
+        }
 
         // Un juego multiplayer nunca termina
 		if (!this.multiplayer &&
@@ -266,6 +298,7 @@ var Game = function(ctx, width, height, opts) {
 
             this.onGameOver();
 		}
+
         // Excepto cuando el jugador muere
         if (this.isClient && this.player1.life <= 0) {
             this.onGameOver();
