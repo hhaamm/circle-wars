@@ -4,7 +4,8 @@ var util = require("util"),
     Player = require("./public/src/player.js"),
     Game = require("./public/src/game.js"),
     Util = require("./public/src/util.js"),
-    Wall = require("./public/src/wall.js").Wall;
+    Wall = require("./public/src/wall.js").Wall,
+    BulletModule = require("./public/src/bullet.js");
 
 var fs = require('fs');
 
@@ -54,6 +55,7 @@ function initGameServer() {
 
     //TODO: code smell
     game.socket = socket;
+    game.io = io;
 
     game.initServer();
 }
@@ -132,13 +134,25 @@ function onMovePlayer(data) {
     this.broadcast.emit("move player", {playerId: data.id, position: {x: data.position.x, y: data.position.y}});
 };
 
-function onNewBullet(bulletData) {
+function onNewBullet(data) {
+    var bulletTypes = BulletModule.bulletTypes;
+
     util.log("New bullet");
-    this.broadcast.emit("new bullet", bulletData);
-}
+    this.broadcast.emit("new bullet", data);
 
-function onBulletGone(bulletId) {
+    console.log(data);
 
+    var v = new Vector(data.direction, data.outsideSuicideZone);
+    v.originX = data.position.x;
+    v.originY = data.position.y;
+    console.log(data);
+    var bulletType = bulletTypes[data.bulletTypeIndex];
+    var bullet = new bulletType(v.x(), v.y(), data.direction, false);
+
+    bullet.id = data.id;
+    bullet.randomNumbers = data.randomNumbers;
+    console.log("new bullet");
+    game.addEntity(bullet, false);
 }
 
 function __emitState(client) {
@@ -150,7 +164,8 @@ function __emitState(client) {
             material: wallEntities[i].material,
             x: wallEntities[i].x,
             y: wallEntities[i].y,
-            randomNumbers: wallEntities[i].randomNumbers
+            randomNumbers: wallEntities[i].randomNumbers,
+            id: wallEntities[i].id
         });
     }
 

@@ -136,7 +136,8 @@ var Game = function(ctx, width, height, opts) {
 				        &&
 				        (x != this.player2.x - this.player2.radius / 2 | y != this.player2.y - this.player2.radius / 2))) {
 				var material = wallMaterials[Math.floor(Math.random()*wallMaterials.length)];
-				this.addEntity(new Wall(x, y, material));
+                var wall = new Wall(x, y, material, uuid.v1());
+				this.addEntity(wall);
 			}
 		}
 
@@ -144,12 +145,12 @@ var Game = function(ctx, width, height, opts) {
         // TODO: manchas de sangre cuando te pega
         // TODO: make this optional
         for(i = 0; i < this.WIDTH/20; i++) {
-            this.addEntity(new Wall(i*20, 0, StoneMaterial));
-            this.addEntity(new Wall(i*20, this.HEIGHT - 20, StoneMaterial));
+            this.addEntity(new Wall(i*20, 0, StoneMaterial, uuid.v1()));
+            this.addEntity(new Wall(i*20, this.HEIGHT - 20, StoneMaterial, uuid.v1()));
         }
         for( i = 0; i < this.HEIGHT/20; i++) {
-            this.addEntity(new Wall(0, i*20, StoneMaterial));
-            this.addEntity(new Wall(this.WIDTH - 20, i*20, StoneMaterial));
+            this.addEntity(new Wall(0, i*20, StoneMaterial, uuid.v1()));
+            this.addEntity(new Wall(this.WIDTH - 20, i*20, StoneMaterial, uuid.v1()));
         }
 
         // house building
@@ -443,11 +444,15 @@ var Game = function(ctx, width, height, opts) {
 
     this.trigger = function(triggerName, data) {
         switch(triggerName) {
-            case "weapon taken":
+            case "weapon taken": // todo: move this to server side
             console.log("Weapon taken");
             this.socket.emit("weapon taken", data);
             break;
         }
+    };
+
+    this.triggerServer = function(triggerName, data) {
+        this.socket.emit(triggerName, data);
     };
 
     this.getEntityById = function(id) {

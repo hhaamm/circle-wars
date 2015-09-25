@@ -1,4 +1,4 @@
-var Wall = function(x, y, material) {
+var Wall = function(x, y, material, id) {
 	this.x = x;
 	this.y = y;
 	this.width = 20;
@@ -9,6 +9,7 @@ var Wall = function(x, y, material) {
 	this.life = material.life;
 	this.bounceChance = material.bounceChance;
     this.randomNumbers = null;
+    this.id = id;
 
 	this.draw = function(ctx) {
 		ctx.fillStyle = this.material.fillStyle;
@@ -16,18 +17,25 @@ var Wall = function(x, y, material) {
 	};
 
 	// something hits the wall
-	this.hit = function(damage) {
+	this.hit = function(damage, fromServer) {
+        if (this.game.isClient && !fromServer)
+            return;
+
 		this.life -= damage;
 		if (this.life <= 0) {
 			this.game.removeEntity(this);
 			this.life = 0;
 
-            // Explosion animation
-            var rnd1 = this.randomNumbers && this.randomNumbers.length ? this.randomNumbers.pop() : Math.random();
-            if (this.material.explosionChance > rnd1) {
-                // TODO: improve
-                var rnd2 = this.randomNumbers && this.randomNumbers.length ? this.randomNumbers.pop() : Math.random();
-                this.game.addEntity(new Explosion(this.x + this.width / 2, this.y + this.height / 2, Math.floor( rnd2 * this.material.life)));
+            if (!this.game.isClient) {
+                // Explosion animation
+                var rnd1 = this.randomNumbers && this.randomNumbers.length ? this.randomNumbers.pop() : Math.random();
+                if (this.material.explosionChance > rnd1) {
+                    // TODO: improve
+                    var rnd2 = this.randomNumbers && this.randomNumbers.length ? this.randomNumbers.pop() : Math.random();
+                    this.game.addEntity(new Explosion(this.x + this.width / 2, this.y + this.height / 2, Math.floor( rnd2 * this.material.life)));
+
+                    // todo: send explosion to clients
+                }
             }
 		};
 	};

@@ -119,7 +119,7 @@
 
             console.log(data.walls);
             for(i = 0; i < data.walls.length; i++) {
-                game.addEntity(new Wall(data.walls[i].x, data.walls[i].y, data.walls[i].material));
+                game.addEntity(new Wall(data.walls[i].x, data.walls[i].y, data.walls[i].material, data.walls[i].id));
             }
 
             console.log("Send new player: " + player1.id);
@@ -192,8 +192,39 @@
             game.addEntity(bullet, false);
         });
 
-        socket.on("bullet bounce", function(data) {
+        socket.on("entity hit", function(data) {
+            console.log("entity hit");
+            var entity = game.getEntityById(data.id);
 
+            if (!entity) {
+                console.log("Not existing entity with id = " + data.id);
+                return;
+            }
+
+            console.log(data);
+            console.log(entity);
+
+            if (entity.type == "weapon" || entity.type == "bullet") {
+                game.removeEntity(entity);
+                return;
+            }
+
+            if (data.life <= 0) {
+                if (entity.type == "wall"
+                   ) {
+                    game.removeEntity(entity);
+                }
+
+                if (entity.type == "player") {
+                    if (entity.id == game.player1.id) {
+                        game.onGameOver();
+                    } else {
+                        game.removeEntity(entity);
+                    }
+                }
+            } else {
+                entity.life = data.life;
+            }
         });
     };
 

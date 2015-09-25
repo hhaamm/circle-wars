@@ -14,13 +14,14 @@ var Explosion = function(x, y, damage, maxRadius, increase) {
 
         // TODO: if we are touching a player, it should be suffer damage!
         var _self = this;
-        $(this.game.players).each(function(i,player) {
+        for(var i = 0; i < this.game.players.length; i++) {
+            var player = this.game.players[i];
             if (_self.hitTest(player) && _self.touchedPlayers.indexOf(player) == -1) {
                 console.log(player);
                 player.hit(_self.damage);
                 _self.touchedPlayers.push(player);
             }
-        });
+        }
 
         if (this.radius >= this.maxRadius) {
             debug("Explosion end!");

@@ -29,7 +29,8 @@ var Bullet = function(x, y, direction) {
 		var _self = this;
 
 		// check if we are hitting a player
-		$(this.game.entities).each(function(i, entity) {
+        for (var i = 0; i < this.game.entities.length; i++) {
+            var entity = this.game.entities[i];
 			if (entity.type == "player") {
 				var distanceX = _self.x - entity.x;
 				var distanceY = _self.y - entity.y;
@@ -88,7 +89,7 @@ var Bullet = function(x, y, direction) {
                     this.game.removeEntity(this);
                 }
             }
-		});
+		}
 
         if (this.aceleration) {
             this.speed += this.aceleration;
@@ -118,12 +119,53 @@ var Bullet = function(x, y, direction) {
      * (i.e. making an explosion)
      */
     this.onEntityHit = function(entity) {
+        // multiplayer clients shouldn't receive damage
+        // unless the server says so
+        // the same for entities
+        if (this.game.isClient)
+            return;
+
+        // If a weapon is hit, then we remove it
         if (entity.type == "weapon") {
+            this.game.trigger("entity hit", entity);
             this.game.removeEntity(entity);
+            this.game.triggerServer("entity hit", {
+                id: entity.id,
+                type: entity.type
+            });
+            // little trick for removing the bullet in the client
+            this.game.triggerServer("entity hit", {
+                id: this.id,
+                type: this.type
+            });
             return;
         }
 
-		entity.hit(this.getDamage());
+
+        var damage = this.getDamage();
+
+        if (this.game.isServer) {
+            console.log("entity hit");
+            entity.hit(damage);
+            console.log({
+                id: entity.id,
+                type: entity.type,
+                damage: damage,
+                life: entity.life
+            });
+            this.game.triggerServer("entity hit", {
+                damage: damage,
+                life: entity.life,
+                id: entity.id,
+                type: entity.type
+            });
+            // little trick for removing the bullet in the client
+            // this.game.triggerServer("entity hit", {
+            //     id: this.id,
+            //     type: this.type
+            // });
+        }
+
     };
 
     this.fragCallback = function() {};
@@ -172,6 +214,9 @@ var Missile = function(x, y, direction) {
     this.bulletTypeIndex = 2; // hardcoded
 
     this.onEntityHit = function(entity) {
+       if (this.game.isClient)
+            return;
+
         if (entity.type == "weapon") {
             this.game.removeEntity(entity);
         }
