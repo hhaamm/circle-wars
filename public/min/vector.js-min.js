@@ -1,0 +1,1 @@
+var Vector=function(b,a){this.direction=b;this.module=a;this.originX=0;this.originY=0;this.sum=function(c){this.module+=c};this.x=function(){return Math.round(Math.cos(this.direction)*this.module)+this.originX};this.y=function(){return Math.round(-Math.sin(this.direction)*this.module)+this.originY}};if(typeof window=="undefined"){module.exports=Vector};

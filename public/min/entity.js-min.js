@@ -1,0 +1,1 @@
+var Entity=function(){this.process=function(){};this.setGame=function(a){this.game=a};this.hitTest=function(b,a,c){if(a==undefined){a=this.x}if(c==undefined){c=this.y}return !(b.x>a+this.radius/2||b.x+b.width<a-this.radius/2||b.y>c+this.radius/2||b.y+b.height<c-this.radius/2)}};if(typeof window=="undefined"){module.exports=Entity};

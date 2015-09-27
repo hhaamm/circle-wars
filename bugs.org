@@ -1,0 +1,9 @@
+* TODO El segundo jugador que entra no puede dañar al primero
+Pareciera que el primer jugador es invulnerable.
+
+Parece que las balas lo atravesaran y no le pegaran.
+* TODO Los misiles no funcionan?
+* TODO Las explosiones no aparecen en todos los clientes?
+* TODO La dirección de los círculos debe ser explícita
+* TODO El color de los círculos debe ser diferente
+* TODO Debe mostrar un ranking de los círculos con mas kills a la derecha y sus colores

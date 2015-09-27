@@ -1,11 +1,11 @@
 var util = require("util"),
     http = require("http"),
     io = require("socket.io"),
-    Player = require("./public/src/player.js"),
-    Game = require("./public/src/game.js"),
-    Util = require("./public/src/util.js"),
-    Wall = require("./public/src/wall.js").Wall,
-    BulletModule = require("./public/src/bullet.js");
+    Player = require("./src/player.js"),
+    Game = require("./src/game.js"),
+    Util = require("./src/util.js"),
+    Wall = require("./src/wall.js").Wall,
+    BulletModule = require("./src/bullet.js");
 
 var fs = require('fs');
 
