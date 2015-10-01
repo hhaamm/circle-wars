@@ -2,6 +2,9 @@
 Pareciera que el primer jugador es invulnerable.
 
 Parece que las balas lo atravesaran y no le pegaran.
+
+
+AHORA NO PUEDO REPRODUCIRLO.
 * TODO Los misiles no funcionan?
 * TODO Las explosiones no aparecen en todos los clientes?
 * TODO La dirección de los círculos debe ser explícita

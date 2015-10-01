@@ -149,8 +149,7 @@
             }
 
             console.log(newPlayer);
-            game.addEntity(newPlayer);
-            game.players.push(newPlayer);
+            game.addPlayerIfNotPresent(newPlayer);
         });
         socket.on("move player", function(data) {
             var player = game.getPlayer(data.playerId);
