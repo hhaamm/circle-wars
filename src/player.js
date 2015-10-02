@@ -44,6 +44,17 @@ var Player = function(x, y, direction, name, keyboard) {
 		ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true);
 		ctx.closePath();
 		ctx.fill();
+
+        // draw direction
+        console.log(this.direction);
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x + Math.cos(this.direction) * this.radius, this.y - Math.sin(this.direction) * this.radius);
+        ctx.lineWidth = 1;
+
+        // set line color
+        ctx.strokeStyle = '#000000';
+        ctx.stroke();
 	};
 
 	this.shoot = function() {
