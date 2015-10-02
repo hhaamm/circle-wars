@@ -1,1 +1,0 @@
-var Client=function(b,a){this.game=b;this.socket=a};Client.prototype.addBullet=function(a){this.socket.emit("new bullet",{id:a.id,position:{x:a.x,y:a.y},direction:a.direction,randomNumbers:a.randomNumbers,outsideSuicideZone:15,bulletTypeIndex:a.bulletTypeIndex})};if(typeof window=="undefined"){module.exports=Client};
