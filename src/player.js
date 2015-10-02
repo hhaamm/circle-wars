@@ -9,7 +9,7 @@ if (typeof window == 'undefined') {
  *
  * @keyboard Can be 1 or 2.
  */
-var Player = function(x, y, direction, name, keyboard) {
+var Player = function(x, y, direction, name, keyboard, color) {
 	this.x = x;
 	this.y = y;
 	this.direction = direction;
@@ -24,6 +24,7 @@ var Player = function(x, y, direction, name, keyboard) {
     this.DIRECTION_RIGHT = 0;
     this.weapon = null;
     this.basicWeapon = new Pistol();
+    this.color = color || "#00A308";
 
 	// call this function when something hits the player
 	this.hit = function(damage) {
@@ -39,7 +40,7 @@ var Player = function(x, y, direction, name, keyboard) {
 	};
 
 	this.draw = function(ctx) {
-		ctx.fillStyle = "#00A308";
+		ctx.fillStyle = this.color;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true);
 		ctx.closePath();

@@ -101,13 +101,13 @@ function onClientDisconnect() {
 };
 
 function onNewPlayer(data) {
-    var player = new Player(100, 100, 0, "New player", 1);
+    var player = new Player(100, 100, 0, "New player", 1, data.color);
     player.id = this.id;
     if (game.addPlayerIfNotPresent(player)) {
         console.log("Added player with id " + player.id);
         console.log("Number of players: " + game.players.length);
 
-        this.broadcast.emit("new player", {id: player.id, direction: player.direction, x: player.getX(), y: player.getY(), name: "New Player"});
+        this.broadcast.emit("new player", {id: player.id, direction: player.direction, x: player.getX(), y: player.getY(), name: "New Player", color: data.color});
     } else {
         util.error("ERROR: Trying to add an already existent player with id " + player.id);
     }
@@ -131,7 +131,7 @@ function onMovePlayer(data) {
     player.x = data.position.x;
     player.y = data.position.y;
 
-    this.broadcast.emit("move player", {playerId: data.id, position: {x: data.position.x, y: data.position.y}});
+    this.broadcast.emit("move player", {playerId: data.id, position: {x: data.position.x, y: data.position.y}, direction: data.direction});
 };
 
 function onNewBullet(data) {
@@ -194,7 +194,8 @@ function __emitState(client) {
             y: game.players[i].y,
             name: "New Player",
             id: game.players[i].id,
-            direction: game.players[i].direction
+            direction: game.players[i].direction,
+            color: game.players[i].color
         });
     }
 

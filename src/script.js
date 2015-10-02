@@ -49,10 +49,21 @@
             backward: 40, // down
             shoot: 13 // ENTER
         };
-		var player1 = new Player(100, 100, 1, "Player 1", keyboard);
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++ ) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+        var color = getRandomColor();
+
+		var player1 = new Player(100, 100, 1, "Player 1", keyboard, color);
 		$(document).keydown(function(evt) {
 			player1.onKeyDown(evt);
-            socket.emit("move player", {id: player1.id, position: {x: player1.getX(), y: player1.getY()}});
+            socket.emit("move player", {id: player1.id, position: {x: player1.getX(), y: player1.getY()}, direction: player1.direction});
 			return false;
 		});
 		$(document).keyup(function(evt) {
@@ -92,7 +103,8 @@
                     data.players[i].y,
                     0,
                     data.players[i].name,
-                    1
+                    1,
+                    data.players[i].color
                 );
                 player.id = data.players[i].id;
 
@@ -123,7 +135,7 @@
             }
 
             console.log("Send new player: " + player1.id);
-            socket.emit("new player", {x: player1.getX(), y: player1.getY(), name: "Player"});
+            socket.emit("new player", {x: player1.getX(), y: player1.getY(), name: "Player", color: player1.color});
         });
         socket.on("connect", function() {
             console.log("Connected");
@@ -135,7 +147,7 @@
         socket.on("new player", function(player) {
             console.log("New player arrived");
             console.log(player);
-            var newPlayer = new Player(player.x, player.y, player.direction, player.name);
+            var newPlayer = new Player(player.x, player.y, player.direction, player.name, undefined, player.color);
             newPlayer.id = player.id;
 
             if (!player.id) {
@@ -157,8 +169,9 @@
                 console.log("WARNING: no player with ID " + data.playerId);
                 return;
             }
-            player.x = data.position.x;
-            player.y = data.position.y;
+            player.x         = data.position.x;
+            player.y         = data.position.y;
+            player.direction = data.direction;
         });
         socket.on("remove player", function(data) {
             console.log("removing player " + data.playerId);
