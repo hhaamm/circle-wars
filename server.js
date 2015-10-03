@@ -22,7 +22,7 @@ function init() {
 
     app.use(express.static(process.cwd() + '/public'));
 
-    var minify = !!process.env.OPENSHIFT_NODEJS_IP; // Only minify on openshift
+    var minify = true || !!process.env.OPENSHIFT_NODEJS_IP; // Only minify on openshift
 
     if ( !minify ) {
         app.use(express.static(process.cwd() + '/src'));
