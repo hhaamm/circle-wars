@@ -13,7 +13,6 @@ var Explosion = function(x, y, damage, maxRadius, increase, id) {
     this.process = function() {
         this.radius += this.increase;
 
-        // TODO: if we are touching a player, it should be suffer damage!
         var _self = this;
         if (this.game.isServer || this.game.isSinglePlayer) {
             for(var i = 0; i < this.game.players.length; i++) {
@@ -33,9 +32,6 @@ var Explosion = function(x, y, damage, maxRadius, increase, id) {
             }
         }
 
-        console.log("log: radius " + this.radius);
-        console.log("increase: " + this.increase);
-        console.log("maxradius: " + this.maxRadius);
         if (this.radius >= this.maxRadius) {
 
             debug("Explosion end!");
