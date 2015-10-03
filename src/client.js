@@ -1,6 +1,14 @@
+if (typeof window == "undefined") {
+    Explosion = require('./explosion');
+}
+
 var Client = function(game, socket) {
     this.game = game;
     this.socket = socket;
+
+    socket.on("new explosion", function(data) {
+        game.addEntity(new Explosion(data.x, data.y, data.damage, data.maxRadius, data.increase, data.id));
+    });
 };
 
 /**

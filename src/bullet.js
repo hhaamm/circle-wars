@@ -1,5 +1,6 @@
 if (typeof window == 'undefined') {
     Explosion = require('./explosion');
+    uuid = require('./uuid');
 }
 
 var MAX_RANDOM_NUMBERS = 100;
@@ -226,9 +227,20 @@ var Missile = function(x, y, direction) {
         // Imagine glass explosion! Crash, crash, crash!
         if (entity.type == "wall") {
             entity.hit(this.getDamage());
+            this.game.triggerServer("entity hit", {
+                id: entity.id,
+                life: entity.life
+            });
         }
 
-        this.game.addEntity(new Explosion(this.x,this.y,this.getDamage(),60,5));
+        this.game.addEntity(new Explosion(this.x, this.y, this.getDamage(), 60, 5, uuid.v1()));
+        this.game.triggerServer("new explosion", {
+            x: this.x,
+            y: this.y,
+            damage: this.getDamage(),
+            maxRadius: 60,
+            increase: 5
+        });
     };
 };
 Missile.prototype = new Bullet(0,0,0);

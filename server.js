@@ -3,17 +3,12 @@ var util = require("util"),
     io = require("socket.io"),
     Player = require("./src/player.js"),
     Game = require("./src/game.js"),
-    Util = require("./src/util.js"),
-    Wall = require("./src/wall.js").Wall,
-    BulletModule = require("./src/bullet.js");
-
-var fs = require('fs');
+    BulletModule = require("./src/bullet.js"),
+    Vector = require("./src/vector.js");
 
 var express = require('express');
 
 var socket, game;
-
-var debug = Util.debug;
 
 function init() {
     // Client
@@ -84,7 +79,7 @@ function onSocketConnection (client) {
     client.on("new bullet", onNewBullet);
 
     __emitState(client);
-};
+}
 
 function onWeaponTaken(data) {
     util.log("Weapon taken: " + data.id);
@@ -96,7 +91,7 @@ function onWeaponTaken(data) {
         game.removeEntity(entity);
         this.broadcast.emit("weapon taken", data);
     }
-};
+}
 
 function onClientDisconnect() {
     util.log("Player has disconnected: "+this.id);
@@ -104,7 +99,7 @@ function onClientDisconnect() {
     game.removePlayer(this.id);
 
     this.broadcast.emit("remove player", {playerId: this.id});
-};
+}
 
 function onNewPlayer(data) {
     var player = new Player(100, 100, 0, "New player", 1, data.color);
@@ -117,7 +112,7 @@ function onNewPlayer(data) {
     } else {
         util.error("ERROR: Trying to add an already existent player with id " + player.id);
     }
-};
+}
 
 function onMovePlayer(data) {
     util.log("Player " + data.id + " moved");
@@ -138,7 +133,7 @@ function onMovePlayer(data) {
     player.y = data.position.y;
 
     this.broadcast.emit("move player", {playerId: data.id, position: {x: data.position.x, y: data.position.y}, direction: data.direction});
-};
+}
 
 function onNewBullet(data) {
     var bulletTypes = BulletModule.bulletTypes;

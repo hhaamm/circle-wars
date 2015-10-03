@@ -132,8 +132,7 @@ var Game = function(ctx, width, height, opts) {
 			// TODO: we need a method to get "the square properties for a circle entity"
 			if (this.multiplayer || // No discrimination when in multiplayer
                 (
-                    (x != this.player1.x - this.player1.radius / 2 || y != this.player1.y - this.player1.radius / 2)
-				        &&
+                    (x != this.player1.x - this.player1.radius / 2 || y != this.player1.y - this.player1.radius / 2) &&
 				        (x != this.player2.x - this.player2.radius / 2 | y != this.player2.y - this.player2.radius / 2))) {
 				var material = wallMaterials[Math.floor(Math.random()*wallMaterials.length)];
                 var wall = new Wall(x, y, material, uuid.v1());
@@ -452,6 +451,8 @@ var Game = function(ctx, width, height, opts) {
     };
 
     this.triggerServer = function(triggerName, data) {
+        console.log("Sending data to all clients: " + triggerName);
+        console.log(data);
         this.socket.emit(triggerName, data);
     };
 

@@ -1,9 +1,9 @@
 (function() {
     var startGame = function() {
         var opts = {};
-        opts["minWalls"] = parseInt($("#createGameForm [name='minWalls']").val());
-        opts["maxWalls"] = parseInt($("#createGameForm [name='maxWalls']").val());
-        opts["weaponGeneration"] = parseFloat($("#createGameForm [name='weaponGeneration']").val());
+        opts.minWalls = parseInt($("#createGameForm [name='minWalls']").val());
+        opts.maxWalls = parseInt($("#createGameForm [name='maxWalls']").val());
+        opts.weaponGeneration = parseFloat($("#createGameForm [name='weaponGeneration']").val());
 
         console.log(opts);
 
@@ -14,7 +14,7 @@
 
         game.onGameOver = function() {
             $("#gameEndMenu").show();
-            delete game;
+            game = null;
         };
     };
 
@@ -30,10 +30,10 @@
         // opts["weaponGeneration"] = parseFloat($("#createGameForm [name='weaponGeneration']").val());
 
         // Hardcoded garbage
-        opts["minWalls"] = 10;
-        opts["maxWalls"] = 200;
-        opts["weaponGeneration"] = 0.9999;
-        opts["multiplayer"] = "client";
+        opts.minWalls = 10;
+        opts.maxWalls = 200;
+        opts.weaponGeneration = 0.9999;
+        opts.multiplayer = "client";
 
         var ctx = $('#canvas')[0].getContext("2d");
         $($('#canvas')[0]).attr("width", "800px");

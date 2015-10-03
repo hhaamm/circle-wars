@@ -1,10 +1,11 @@
-var Explosion = function(x, y, damage, maxRadius, increase) {
+var Explosion = function(x, y, damage, maxRadius, increase, id) {
     this.maxRadius = maxRadius ? maxRadius : 30;
     this.damage = damage;
     this.increase = increase ? increase : 1;
     this.radius = 0;
     this.x = x;
     this.y = y;
+    this.id = id;
     this.touchedPlayers = [];
 
     debug("Exlosion!");
@@ -14,16 +15,29 @@ var Explosion = function(x, y, damage, maxRadius, increase) {
 
         // TODO: if we are touching a player, it should be suffer damage!
         var _self = this;
-        for(var i = 0; i < this.game.players.length; i++) {
-            var player = this.game.players[i];
-            if (_self.hitTest(player) && _self.touchedPlayers.indexOf(player) == -1) {
-                console.log(player);
-                player.hit(_self.damage);
-                _self.touchedPlayers.push(player);
+        if (this.game.isServer || this.game.isSinglePlayer) {
+            for(var i = 0; i < this.game.players.length; i++) {
+                var player = this.game.players[i];
+                if (_self.hitTest(player) && _self.touchedPlayers.indexOf(player) == -1) {
+                    console.log(player);
+                    player.hit(_self.damage);
+                    _self.touchedPlayers.push(player);
+
+                    if (_self.game.isServer) {
+                        _self.game.triggerServer("entity hit", {
+                            id: player.id,
+                            life: player.life
+                        });
+                    }
+                }
             }
         }
 
+        console.log("log: radius " + this.radius);
+        console.log("increase: " + this.increase);
+        console.log("maxradius: " + this.maxRadius);
         if (this.radius >= this.maxRadius) {
+
             debug("Explosion end!");
             this.game.removeEntity(this);
         };

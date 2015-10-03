@@ -32,9 +32,17 @@ var Wall = function(x, y, material, id) {
                 if (this.material.explosionChance > rnd1) {
                     // TODO: improve
                     var rnd2 = this.randomNumbers && this.randomNumbers.length ? this.randomNumbers.pop() : Math.random();
-                    this.game.addEntity(new Explosion(this.x + this.width / 2, this.y + this.height / 2, Math.floor( rnd2 * this.material.life)));
+                    var explosion = new Explosion(this.x + this.width / 2, this.y + this.height / 2, Math.floor( rnd2 * this.material.life), 30, 1, uuid.v1());
+                    this.game.addEntity(explosion);
 
-                    // todo: send explosion to clients
+                    this.game.triggerServer("new explosion", {
+                        x: this.x + this.width / 2,
+                        y: this.y + this.height / 2,
+                        damage: Math.floor( rnd2 * this.material.life),
+                        maxRadius: explosion.maxRadius,
+                        increase: explosion.increase,
+                        id: explosion.id
+                    });
                 }
             }
 		};
