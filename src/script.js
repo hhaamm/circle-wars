@@ -95,8 +95,6 @@
 
             player1.id = data.id;
 
-
-
             for(var i = 0; i < data.players.length; i++) {
                 var player = new Player(
                     data.players[i].x,

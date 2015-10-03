@@ -27,11 +27,17 @@ function init() {
 
     app.use(express.static(process.cwd() + '/public'));
 
+    var minify = !!process.env.OPENSHIFT_NODEJS_IP; // Only minify on openshift
+
+    if ( !minify ) {
+        app.use(express.static(process.cwd() + '/src'));
+    }
+
     // set the view engine to ejs
     app.set('view engine', 'ejs');
 
     app.get('/', function (req, res) {
-        res.render('index', { ip: ip, port: port, serverUrl: serverUrl});
+        res.render('index', { ip: ip, port: port, serverUrl: serverUrl, minify: minify });
     });
 
     app.get('/over', function (req, res) {

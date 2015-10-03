@@ -47,7 +47,6 @@ var Player = function(x, y, direction, name, keyboard, color) {
 		ctx.fill();
 
         // draw direction
-        console.log(this.direction);
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
         ctx.lineTo(this.x + Math.cos(this.direction) * this.radius, this.y - Math.sin(this.direction) * this.radius);
