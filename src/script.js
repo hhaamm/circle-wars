@@ -18,13 +18,12 @@
         };
     };
 
-    var startMultiplayerGame = function() {
+    var startMultiplayerGame = function(opts) {
         //TODO: move all this code to CLIENT.js ?
 
         // serverUrl is defined in index.ejs
         var socket = io.connect(serverUrl, {transports: ["websocket"]});
 
-        var opts = {};
         // opts["minWalls"] = parseInt($("#createGameForm [name='minWalls']").val());
         // opts["maxWalls"] = parseInt($("#createGameForm [name='maxWalls']").val());
         // opts["weaponGeneration"] = parseFloat($("#createGameForm [name='weaponGeneration']").val());
@@ -34,6 +33,9 @@
         opts.maxWalls = 200;
         opts.weaponGeneration = 0.9999;
         opts.multiplayer = "client";
+        if (!opts.playerName) {
+            opts.playerName = "Annonymous Player";
+        }
 
         var ctx = $('#canvas')[0].getContext("2d");
         $($('#canvas')[0]).attr("width", "800px");
@@ -60,7 +62,7 @@
         }
         var color = getRandomColor();
 
-		var player1 = new Player(100, 100, 1, "Player 1", keyboard, color);
+		var player1 = new Player(100, 100, 1, opts.playerName, keyboard, color);
 		$(document).keydown(function(evt) {
 			player1.onKeyDown(evt);
             socket.emit("move player", {id: player1.id, position: {x: player1.getX(), y: player1.getY()}, direction: player1.direction});
@@ -247,7 +249,11 @@
         $("#newMultiplayerGameBtn").click(function() {
             setStage("Game");
 
-            startMultiplayerGame();
+            var opts = {
+                playerName: $("#playerName").val()
+            };
+
+            startMultiplayerGame(opts);
 
             return false;
         });

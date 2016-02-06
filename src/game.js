@@ -238,8 +238,6 @@ var Game = function(ctx, width, height, opts) {
             this.process();
         }
 
-        // debug(times);
-
         if (!this.isServer) {
             this.draw();
         }
@@ -377,6 +375,10 @@ var Game = function(ctx, width, height, opts) {
         if (!this.isServer && this.player1) {
             // TODO: draw player stats ONLY for player 1?
 		    this.drawPlayerStats(20, 30, this.player1);
+
+            if (this.multiplayer) {
+                this.drawConnectedPlayers();
+            }
         }
 
         if (!this.multiplayer) {
@@ -385,12 +387,34 @@ var Game = function(ctx, width, height, opts) {
 	};
 
 	this.drawPlayerStats = function(x, y, player) {
-		this.ctx.fillStyle = "white";
+		this.ctx.fillStyle = player.color;
 		this.ctx.font = "bold 16px Arial";
 		this.ctx.fillText(player.name, x, y);
+        this.ctx.fillStyle = "white";
 		this.ctx.fillText(player.getWeapon().name + " " + (player.getWeapon().bullets > 0 ? player.getWeapon().bullets : ""), x, y + 20);
 		this.ctx.fillText(player.life, x, y + 40);
 	};
+
+    /**
+     * Draws connected players on the top right part of the screen
+     */
+    this.drawConnectedPlayers = function() {
+		this.ctx.font = "bold 16px Arial";
+
+        for(var i = 0, j = 0; i < this.players.length; i++, j++) {
+
+            if (this.players[i].id != this.player1.id) {
+                this.ctx.textAlign = "right";
+                this.ctx.fillStyle = this.players[i].color;
+                this.ctx.fillText(this.players[i].name, this.WIDTH - 20, 20 + j * 10);
+                j++;
+
+            }
+        }
+
+        // it sets back the original text align
+        this.ctx.textAlign = "left";
+    };
 
 	this.clear = function() {
 		// ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT);

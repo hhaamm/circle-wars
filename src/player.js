@@ -26,6 +26,10 @@ var Player = function(x, y, direction, name, keyboard, color) {
     this.basicWeapon = new Pistol();
     this.color = color || "#00A308";
 
+    /* ranking stats */
+    this.kills = 0; // Needs to be investigated
+    this.joinTime = Date.now();
+
 	// call this function when something hits the player
 	this.hit = function(damage) {
 		this.life -= damage;
