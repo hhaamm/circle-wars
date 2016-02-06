@@ -1,3 +1,7 @@
+if (typeof window == 'undefined') {
+    Entity = require('./entity.js');
+}
+
 var Wall = function(x, y, material, id) {
 	this.x = x;
 	this.y = y;

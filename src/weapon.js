@@ -178,7 +178,9 @@ var weaponTypes = [MachineGun, Shotgun, MissileLauncher]; // FragmentationPistol
 // TODO: add Frag and Armagedon for online games?
 
 if (typeof window == 'undefined') {
+    module.exports.Weapon = Weapon;
     module.exports.MissileLauncher = MissileLauncher;
     module.exports.Pistol = Pistol;
+    module.exports.Shotgun = Shotgun;
     module.exports.weaponTypes = weaponTypes;
 }

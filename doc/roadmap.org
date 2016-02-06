@@ -1,4 +1,6 @@
 * Roadmap
+- [ ] Add unit tests and refactor client.js and server.js, separating client and server and reusing only needed component
+- [ ] Add certain prefix to shared object, like SharedExplosion, SharedBullet, etc.
 - [ ] Allow to move with only pressing keyboard arrows
 - [ ] Add a line showing circle direction
 - [ ] Add the option of static maps
