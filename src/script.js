@@ -19,6 +19,11 @@
     };
 
     var startMultiplayerGame = function(opts) {
+        // Save playerName on local storage, if localStorage exists
+        if (localStorage && opts.playerName) {
+            localStorage.setItem("playerName", opts.playerName);
+        }
+
         //TODO: move all this code to CLIENT.js ?
 
         // serverUrl is defined in index.ejs
@@ -300,5 +305,10 @@
         setButtonCallbacks();
 
         setStage("Init");
+
+        // Load name from session storage, if localStorage exists
+        if (localStorage && localStorage.getItem("playerName")) {
+            $("#playerName").val(localStorage.getItem("playerName"));
+        }
     });
 })();
